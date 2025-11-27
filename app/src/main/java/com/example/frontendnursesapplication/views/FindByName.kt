@@ -28,13 +28,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.frontendnursesapplication.R
 import com.example.frontendnursesapplication.entities.Nurse
 
 @Composable
-fun FindByName(){
+fun FindByName(navController: NavController){
     // Liste de nurses que actuaria como el backend
-    val nurses = listOf(
+    val nurses = mutableStateListOf(
         Nurse("Juan", "Perez", "juan@mail.com", "juan123", "1234"),
         Nurse("Pepe", "Lopez", "pepe@mail.com", "pepe45", "abcd"),
         Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass")
@@ -140,8 +141,8 @@ fun PrintNurse(nurse: Nurse){
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FindByNamePreview() {
-    FindByName()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun FindByNamePreview() {
+//    FindByName()
+//}

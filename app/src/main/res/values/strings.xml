@@ -23,5 +23,9 @@
     <string name="Email">Email</string>
     <string name="Password">Password</string>
 
+    <string name="title_init">¡Bienvenido al Hospital STUCOM!</string>
+    <string name="button_info_list_all_nurses">Lista de Enfermer@s</string>
 
+    <string name="title_allnurses_view">Listado de todos los enfermer@s</string>
+    <string name="button_info_return_home">Volver al Home</string>
 </resources>

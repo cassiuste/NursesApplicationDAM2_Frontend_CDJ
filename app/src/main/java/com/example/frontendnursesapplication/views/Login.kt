@@ -53,13 +53,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.frontendnursesapplication.R
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.ui.theme.Rubik
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
 
     Surface {
         Column(
@@ -221,7 +222,7 @@ fun LoginSection(){
 
 
 
-    val nurses = listOf(
+    val nurses = mutableListOf(
         Nurse("Juan", "Perez", "juan@mail.com", "juan123", "1234"),
         Nurse("Pepe", "Lopez", "pepe@mail.com", "pepe45", "abcd"),
         Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass")
@@ -442,9 +443,9 @@ fun LoginTextField(
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun LoginPreview(){
-    LoginScreen();
-
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginPreview(){
+//    LoginScreen();
+//
+//}

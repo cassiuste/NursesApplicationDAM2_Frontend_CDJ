@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">FrontendNursesApplication</string>
-    <string name="find_by_name">Find Nurse By Name:</string>
+    <string name="find_by_name">Find Nurse By Name</string>
     <string name="write_name">Write the name</string>
     <string name="could_not_found_nurse">Could not found the nurse</string>
     <string name="clear_response">Clear Response</string>

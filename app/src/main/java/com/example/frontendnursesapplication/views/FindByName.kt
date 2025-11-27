@@ -1,18 +1,21 @@
 package com.example.frontendnursesapplication.views
-import android.graphics.Color
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -24,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,8 +38,8 @@ import com.example.frontendnursesapplication.entities.Nurse
 
 @Composable
 fun FindByName(navController: NavController){
-    // Liste de nurses que actuaria como el backend
-    val nurses = mutableStateListOf(
+    // Lista de nurses que actuaria como el backend
+    val nurses = listOf(
         Nurse("Juan", "Perez", "juan@mail.com", "juan123", "1234"),
         Nurse("Pepe", "Lopez", "pepe@mail.com", "pepe45", "abcd"),
         Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass")
@@ -46,12 +50,30 @@ fun FindByName(navController: NavController){
     val result = remember {mutableStateListOf<Nurse>()};
     var notFound by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.padding(top = 40.dp, end = 20.dp, start = 20.dp, bottom = 20.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 8.dp, end = 20.dp, start = 20.dp, bottom = 20.dp)
+    ) {
 
-        Text(
-            text = stringResource(R.string.find_by_name),
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        TopSection()
+
+        Spacer(modifier = Modifier.height(33.dp))
+
+        Row(horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.find_by_name),
+                modifier = Modifier.padding(bottom = 16.dp, end = 10.dp),
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Image(painterResource(id = R.drawable.enfermero),
+                contentDescription = null,
+                modifier = Modifier.size(45.dp))
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         // TextField donde el usuario escribe un nombre
         TextField(
@@ -94,33 +116,34 @@ fun FindByName(navController: NavController){
             )
         }
         // Imprime los nurses encontrados
-    LazyColumn(modifier = Modifier
-        .weight(1f)
-        .padding(8.dp))
-    {
-        items(result){ nurse ->
-            PrintNurse(nurse)
-            Button(onClick = {
-                result.clear()
-            },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.pinkstucom), // PinkStucom
-                    contentColor = colorResource(id = R.color.whitestucom)
-                ),
-                modifier = Modifier.padding(top = 12.dp)
-            )
-            {
-                Text(text = stringResource(R.string.clear_response))
+        LazyColumn(modifier = Modifier
+            .weight(1f)
+            .padding(8.dp))
+        {
+            items(result){ nurse ->
+                PrintNurse(nurse)
+                Button(onClick = {
+                    result.clear()
+                },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.pinkstucom), // PinkStucom
+                        contentColor = colorResource(id = R.color.whitestucom)
+                    ),
+                    modifier = Modifier.padding(top = 12.dp)
+                )
+                {
+                    Text(text = stringResource(R.string.clear_response))
                 }
             }
         }
+        HomeButton(navController)
     }
 }
 
 @Composable
 fun PrintNurse(nurse: Nurse){
     Column(modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally)
+        horizontalAlignment = Alignment.CenterHorizontally)
     {
         Row(modifier = Modifier.padding(10.dp)
             .fillMaxWidth(),
@@ -132,7 +155,8 @@ fun PrintNurse(nurse: Nurse){
         }
         Row(modifier = Modifier.padding(10.dp)
             .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween) {
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
             Text(text = nurse.name);
             Text(text = nurse.surname);
             Text(text = nurse.user);
@@ -141,8 +165,22 @@ fun PrintNurse(nurse: Nurse){
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun FindByNamePreview() {
-//    FindByName()
-//}
+@Composable
+fun HomeButton(navController: NavController){
+    Button(onClick = {
+        navController.popBackStack()
+    },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(id = R.color.bluestucom),
+            contentColor = colorResource(id = R.color.whitestucom)),
+        modifier = Modifier.fillMaxWidth().padding(20.dp).padding(bottom = 20.dp)) {
+        Text(text = stringResource(R.string.button_info_return_home))
+
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FindByNamePreview() {
+    // FindByName()
+}

@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.frontendnursesapplication.views.AllNursesView
 import com.example.frontendnursesapplication.views.FindByName
 import com.example.frontendnursesapplication.views.InitialView
 import com.example.frontendnursesapplication.views.LoginScreen
@@ -31,7 +32,7 @@ fun AppNavigation(modifier: Modifier) {
         }
 
         composable(route = "listAll") {
-
+            AllNursesView(navController = navController)
         }
     }
 }

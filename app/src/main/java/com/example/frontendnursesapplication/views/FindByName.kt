@@ -96,9 +96,9 @@ fun FindByName(navController: NavController){
 
                         if (foundNurses.isNotEmpty()) {
                             result.addAll(foundNurses)
-                            notFound = false   // sí se encontró
+                            notFound = false
                         } else {
-                            notFound = true    // no se encontró
+                            notFound = true
                         }
 
                         // Se reinicia el buscador
@@ -126,7 +126,7 @@ fun FindByName(navController: NavController){
                     result.clear()
                 },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.pinkstucom), // PinkStucom
+                        containerColor = colorResource(id = R.color.pinkstucom),
                         contentColor = colorResource(id = R.color.whitestucom)
                     ),
                     modifier = Modifier.padding(top = 12.dp)
@@ -170,9 +170,6 @@ fun HomeButton(navController: NavController){
     Button(onClick = {
         navController.popBackStack()
     },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(id = R.color.bluestucom),
-            contentColor = colorResource(id = R.color.whitestucom)),
         modifier = Modifier.fillMaxWidth().padding(20.dp).padding(bottom = 20.dp)) {
         Text(text = stringResource(R.string.button_info_return_home))
 
@@ -182,5 +179,5 @@ fun HomeButton(navController: NavController){
 @Preview(showBackground = true)
 @Composable
 fun FindByNamePreview() {
-    // FindByName()
+  // FindByName()
 }

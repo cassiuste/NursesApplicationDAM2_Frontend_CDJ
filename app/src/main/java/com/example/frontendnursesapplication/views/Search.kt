@@ -1,6 +1,9 @@
 package com.example.frontendnursesapplication.views
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,12 +19,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -39,10 +40,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.frontendnursesapplication.entities.Nurse
+import com.example.frontendnursesapplication.ui.theme.Rubik
 
 @Composable
 fun AllNursesView (navController: NavHostController) {
@@ -52,16 +55,17 @@ fun AllNursesView (navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
+        TopSection()
 
         Text(
             text = stringResource(R.string.title_allnurses_view),
             fontWeight = FontWeight.Bold, fontSize = 25.sp,
             textAlign = TextAlign.Center,
-            modifier = Modifier.statusBarsPadding().padding(top = 50.dp),
+            modifier = Modifier.statusBarsPadding().padding(top = 20.dp),
             color = colorResource(R.color.black)
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         NursesTable(modifier = Modifier.weight(1f))
 
@@ -161,5 +165,9 @@ fun NurseCard(nurse: Nurse) {
 private fun getHardcodedNurses() = listOf(
     Nurse("Juan", "Perez", "juan@mail.com", "juan123", "1234"),
     Nurse("Pepe", "Lopez", "pepe@mail.com", "pepe45", "abcd"),
-    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass")
+    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass"),
+    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass"),
+    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass"),
+    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass"),
+    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass"),
 )

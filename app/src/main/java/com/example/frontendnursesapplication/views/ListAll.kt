@@ -1,9 +1,6 @@
 package com.example.frontendnursesapplication.views
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -40,12 +37,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.frontendnursesapplication.entities.Nurse
-import com.example.frontendnursesapplication.ui.theme.Rubik
 
 @Composable
 fun AllNursesView (navController: NavHostController) {
@@ -72,9 +67,6 @@ fun AllNursesView (navController: NavHostController) {
         Button(onClick = {
             navController.popBackStack()
         },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.bluestucom),
-                contentColor = colorResource(id = R.color.whitestucom)),
             modifier = Modifier.fillMaxWidth().padding(20.dp).padding(bottom = 20.dp)) {
 
             Text(text = stringResource(R.string.button_info_return_home))

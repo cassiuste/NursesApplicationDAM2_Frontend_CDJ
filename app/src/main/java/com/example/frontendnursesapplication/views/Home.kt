@@ -44,7 +44,7 @@ fun InitialView(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            homeBody(navController)
+            HomeBody(navController)
         }
     }
 
@@ -57,7 +57,7 @@ private data class MenuItem(
 )
 
 @Composable
-fun homeBody(navController: NavHostController){
+fun HomeBody(navController: NavHostController){
 
     val menuItems = listOf(
         MenuItem("Login Enfermer@", "login", R.drawable.enfermeros),
@@ -73,7 +73,7 @@ fun homeBody(navController: NavHostController){
         contentPadding = PaddingValues(30.dp)
     ) {
         items(menuItems) { item ->
-            navigationCard(
+            NavigationCard(
                 titleCard = item.title,
                 navigationRoute = item.route,
                 imageRes = item.imageRes,
@@ -85,7 +85,7 @@ fun homeBody(navController: NavHostController){
 }
 
 @Composable
-fun navigationCard(titleCard: String, navigationRoute: String, navController: NavHostController,imageRes: Int){
+fun NavigationCard(titleCard: String, navigationRoute: String, navController: NavHostController,imageRes: Int){
 
     Card(
         modifier = Modifier.aspectRatio(1f),

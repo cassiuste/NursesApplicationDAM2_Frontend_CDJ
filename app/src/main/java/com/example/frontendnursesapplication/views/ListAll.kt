@@ -34,15 +34,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.frontendnursesapplication.Viewmodel.ListAllViewModel
 import com.example.frontendnursesapplication.entities.Nurse
 
 @Composable
 fun AllNursesView (navController: NavHostController) {
+    val listAllViewModel: ListAllViewModel = viewModel()
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -61,7 +65,11 @@ fun AllNursesView (navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        NursesTable(modifier = Modifier.weight(1f))
+
+        NursesTable(
+            modifier = Modifier.weight(1f),
+            viewModel = listAllViewModel
+        )
 
         Button(onClick = {
             navController.popBackStack()
@@ -74,8 +82,9 @@ fun AllNursesView (navController: NavHostController) {
 }
 
 @Composable
-fun NursesTable(modifier: Modifier) {
-    var nurses by remember { mutableStateOf(getHardcodedNurses()) }
+fun NursesTable(modifier: Modifier, viewModel: ListAllViewModel) {
+
+    val uiState by viewModel.uiState.collectAsState()
 
     LazyColumn(
         modifier = modifier
@@ -84,14 +93,19 @@ fun NursesTable(modifier: Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(20.dp)
     ) {
-        items(nurses) { nurse ->
+
+
+        items(uiState.nurses) { nurse ->
             NurseCard(nurse = nurse)
         }
     }
 }
 
 @Composable
-fun NurseCard(nurse: Nurse) {
+fun NurseCard(nurse: Nurse, viewModel: ListAllViewModel = viewModel()) {
+
+    val uiState = viewModel.uiState.collectAsState().value
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -153,12 +167,3 @@ fun NurseCard(nurse: Nurse) {
     }
 }
 
-private fun getHardcodedNurses() = listOf(
-    Nurse("Juan", "Perez", "juan@mail.com", "juan123", "1234"),
-    Nurse("Pepe", "Lopez", "pepe@mail.com", "pepe45", "abcd"),
-    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass"),
-    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass"),
-    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass"),
-    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass"),
-    Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass"),
-)

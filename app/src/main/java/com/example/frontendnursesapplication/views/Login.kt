@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,10 +57,12 @@ import androidx.navigation.NavController
 import com.example.frontendnursesapplication.R
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.ui.theme.Rubik
+import com.example.frontendnursesapplication.viewmodels.LoginViewModel
 
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(navController: NavController,
+                loginViewModel: LoginViewModel = LoginViewModel()) {
 
     Surface {
         Column(
@@ -78,7 +81,7 @@ fun LoginScreen(navController: NavController) {
                     .fillMaxSize()
                     .padding(horizontal = 60.dp)
             ) {
-                LoginSection()
+                LoginSection(loginViewModel)
                 Spacer(modifier = Modifier.Companion.height(100.dp))
 
                 Column(horizontalAlignment = Alignment.Companion.CenterHorizontally) {
@@ -210,28 +213,21 @@ fun titleLogin() {
 
 
 @Composable
-fun LoginSection(){
+fun LoginSection(loginViewModel: LoginViewModel){
 
+    val uiState = loginViewModel.loginState.collectAsState().value
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+
     val context = LocalContext.current
     val forgot = stringResource(id = R.string.forgot)
     val softRed = colorResource(id = R.color.soft_red)
     val bluegray = colorResource(id = R.color.blue_gray)
 
     val correctoText = stringResource(id = R.string.correcto)
-    val incorrectoText = stringResource(id = R.string.incorrecto)
-    val nohaynadaText = stringResource(id = R.string.nohaynada)
     val email = stringResource(id = R.string.Email)
     val password = stringResource(id = R.string.Password)
 
-
-
-    val nurses = mutableListOf(
-        Nurse("Juan", "Perez", "juan@mail.com", "juan123", "1234"),
-        Nurse("Pepe", "Lopez", "pepe@mail.com", "pepe45", "abcd"),
-        Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass")
-    )
 
     Column() {
         LoginTextField(
@@ -267,29 +263,9 @@ fun LoginSection(){
                 .fillMaxWidth()
                 .height(40.dp),
             onClick = {
-                val emailInput = emailState.value
-                val passwordInput = passwordState.value
-
-                if (emailInput.isEmpty() || passwordInput.isEmpty()) {
-                    Toast.makeText(
-                        context,
-                        nohaynadaText,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }else{
-
-                    val nurseFound = nurses.find { nurse ->
-                        nurse.email == emailInput && nurse.password == passwordInput
-                    }
-
-                    if (nurseFound != null) {
-                        Toast.makeText(context, correctoText, Toast.LENGTH_SHORT).show()
-
-                    } else {
-                        Toast.makeText(context, incorrectoText, Toast.LENGTH_SHORT).show()
-                    }
-
-                }
+                loginViewModel.onEmailChange(emailState.value)
+                loginViewModel.onPasswordChange(passwordState.value)
+                loginViewModel.login()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (isSystemInDarkTheme()) bluegray else Color.Companion.Black,
@@ -302,7 +278,14 @@ fun LoginSection(){
                 text = "Log in",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Companion.Medium)
             )
+        }
 
+        if (uiState.errorMessage) {
+            Toast.makeText(context, stringResource(R.string.incorrecto), Toast.LENGTH_SHORT).show()
+        }
+
+        if (uiState.success) {
+            Toast.makeText(context, stringResource(R.string.correcto), Toast.LENGTH_SHORT).show()
         }
     }
 }

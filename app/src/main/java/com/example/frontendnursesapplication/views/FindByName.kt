@@ -1,5 +1,6 @@
 package com.example.frontendnursesapplication.views
-import androidx.compose.foundation.Image
+
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
@@ -19,36 +19,30 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.frontendnursesapplication.R
 import com.example.frontendnursesapplication.entities.Nurse
+import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 
 @Composable
-fun FindByName(navController: NavController){
-    // Lista de nurses que actuaria como el backend
-    val nurses = listOf(
-        Nurse("Juan", "Perez", "juan@mail.com", "juan123", "1234"),
-        Nurse("Pepe", "Lopez", "pepe@mail.com", "pepe45", "abcd"),
-        Nurse("Maria", "Gomez", "maria@mail.com", "mariag", "pass")
-    )
+fun FindByName(navController: NavController, nurseViewModel: NurseViewModel = viewModel()){
+    val findByNameState by nurseViewModel.findByNameState.collectAsState()
 
-
-    var search by remember { mutableStateOf("") };
-    val result = remember {mutableStateListOf<Nurse>()};
-    var notFound by remember { mutableStateOf(false) }
+    var search by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -56,7 +50,6 @@ fun FindByName(navController: NavController){
             .padding(top = 8.dp, end = 20.dp, start = 20.dp, bottom = 20.dp)
     ) {
 
-        TopSection()
 
         Spacer(modifier = Modifier.height(33.dp))
 
@@ -68,9 +61,6 @@ fun FindByName(navController: NavController){
                 modifier = Modifier.padding(bottom = 16.dp, end = 10.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
-            Image(painterResource(id = R.drawable.enfermero),
-                contentDescription = null,
-                modifier = Modifier.size(45.dp))
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -88,51 +78,56 @@ fun FindByName(navController: NavController){
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if (search.isNotBlank()) {
-                        // Se limpia la lista antes de seleccionarla
-                        result.clear()
-                        // Se itera sobre la lista de nurses para verificarla si el nombre es igual
-                        val foundNurses = nurses.filter { it.name.equals(search, ignoreCase = true) }
-
-                        if (foundNurses.isNotEmpty()) {
-                            result.addAll(foundNurses)
-                            notFound = false
-                        } else {
-                            notFound = true
-                        }
-
-                        // Se reinicia el buscador
-                        search = ""
+                    if (search.trim().isNotEmpty()) {
+                        nurseViewModel.findByName(search)
                     }
                 }
             ),
             modifier = Modifier.fillMaxWidth()
         )
-        if (notFound) {
+
+        findByNameState.error?.let { errorMsg ->
             Text(
-                text = stringResource(R.string.could_not_found_nurse),
-                color = colorResource(id = R.color.redstucom),
-                modifier = Modifier.padding(top = 12.dp)
+                text = errorMsg,
+                color = colorResource(R.color.redstucom),
+                modifier = Modifier.padding(top = 12.dp),
             )
         }
-        // Imprime los nurses encontrados
-        LazyColumn(modifier = Modifier
-            .weight(1f)
-            .padding(8.dp))
-        {
-            items(result){ nurse ->
-                PrintNurse(nurse)
-                Button(onClick = {
-                    result.clear()
-                },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.pinkstucom),
-                        contentColor = colorResource(id = R.color.whitestucom)
-                    ),
-                    modifier = Modifier.padding(top = 12.dp)
-                )
+
+        Column (modifier = Modifier.weight(1f).padding(top = 20.dp)){
+            if (findByNameState.nurses.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(colorResource(R.color.pinkstucom).copy(alpha = 0.15f))
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("Name", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                    Text("Surname", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                    Text("User", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                    Text("Email", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                }
+                LazyColumn(modifier = Modifier
+                    .weight(1f)
+                    .padding(5.dp))
                 {
-                    Text(text = stringResource(R.string.clear_response))
+                    items(findByNameState.nurses){ nurse ->
+                        PrintNurse(nurse)
+                    }
+                }
+
+                Button(
+                    onClick = { nurseViewModel.clearResults() },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(R.color.pinkstucom),
+                        contentColor = colorResource(R.color.whitestucom)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, start = 8.dp, end = 8.dp)
+                ) {
+                    Text(stringResource(R.string.clear_response))
                 }
             }
         }
@@ -142,26 +137,17 @@ fun FindByName(navController: NavController){
 
 @Composable
 fun PrintNurse(nurse: Nurse){
-    Column(modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally)
-    {
-        Row(modifier = Modifier.padding(10.dp)
-            .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = stringResource(R.string.Name));
-            Text(text = stringResource(R.string.Surname));
-            Text(text = stringResource(R.string.User));
-            Text(text = stringResource(R.string.Email));
-        }
-        Row(modifier = Modifier.padding(10.dp)
-            .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(text = nurse.name);
-            Text(text = nurse.surname);
-            Text(text = nurse.user);
-            Text(text = nurse.email);
-        }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(nurse.name, modifier = Modifier.weight(1f))
+        Text(nurse.surname, modifier = Modifier.weight(1f))
+        Text(nurse.user, modifier = Modifier.weight(1f))
+        Text(nurse.email, modifier = Modifier.weight(1f))
     }
 }
 
@@ -174,10 +160,4 @@ fun HomeButton(navController: NavController){
         Text(text = stringResource(R.string.button_info_return_home))
 
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FindByNamePreview() {
-  // FindByName()
 }

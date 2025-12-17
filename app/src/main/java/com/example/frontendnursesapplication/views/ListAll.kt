@@ -37,12 +37,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 
 @Composable
 fun AllNursesView (navController: NavHostController) {
-    val nurseViewModel: NurseViewModel = NurseViewModel()
+    val nurseViewModel: NurseViewModel = viewModel()
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -99,8 +100,6 @@ fun NursesTable(modifier: Modifier, nurseViewModel: NurseViewModel) {
 
 @Composable
 fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
-
-    val uiState = nurseViewModel.uiState.collectAsState().value
 
     Card(
         modifier = Modifier.fillMaxWidth(),

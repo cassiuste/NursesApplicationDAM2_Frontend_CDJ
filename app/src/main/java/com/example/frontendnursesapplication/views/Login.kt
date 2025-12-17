@@ -53,6 +53,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.frontendnursesapplication.R
 import com.example.frontendnursesapplication.ui.theme.Rubik
@@ -61,7 +62,7 @@ import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 
 @Composable
 fun LoginScreen(navController: NavController,
-                nurseViewModel: NurseViewModel = NurseViewModel()
+                nurseViewModel: NurseViewModel = viewModel()
 ) {
     Surface {
         Column(

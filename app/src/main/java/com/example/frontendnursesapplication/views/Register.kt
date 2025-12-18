@@ -141,13 +141,13 @@ fun RegisterSection(navController: NavController,
 
             LaunchedEffect(Unit) {
                 delay(3000)
-                navController.navigate("start") {
+                navController.navigate("home") {
                     popUpTo("register") { inclusive = true }
                 }
             }
-            if (registerState.error) {
-                Toast.makeText(context, stringResource(id = R.string.EmailExists), Toast.LENGTH_SHORT).show()
-            }
+        }
+        if (registerState.error) {
+            Toast.makeText(context, stringResource(id = R.string.EmailExists), Toast.LENGTH_SHORT).show()
         }
     }
 }

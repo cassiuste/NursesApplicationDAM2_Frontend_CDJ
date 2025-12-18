@@ -294,7 +294,7 @@ fun LoginSection(navController: NavController,
 
             LaunchedEffect(Unit) {
                 delay(3000)
-                navController.navigate("start") {
+                navController.navigate("home") {
                     popUpTo("login") { inclusive = true }
                 }
             }

@@ -1,5 +1,6 @@
 package com.example.frontendnursesapplication.views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +25,7 @@ import androidx.navigation.NavHostController
 import com.example.frontendnursesapplication.R
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
@@ -32,8 +34,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -106,6 +110,7 @@ fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(containerColor = colorResource(R.color.white))
     ) {
+
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -127,35 +132,53 @@ fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = null,
-                    tint = colorResource(R.color.purple_500),
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = nurse.email,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = colorResource(R.color.blue_gray)
-                )
-            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-            Spacer(modifier = Modifier.height(6.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Person,
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = null,
+                            tint = colorResource(R.color.purple_500),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = nurse.email,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = colorResource(R.color.blue_gray)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = Color(0xFF6200EE),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = nurse.user,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = colorResource(R.color.blue_gray)
+                        )
+                    }
+                }
+                Image(
+                    painter = painterResource(id = R.drawable.equipomedico),
                     contentDescription = null,
-                    tint = Color(0xFF6200EE),
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = nurse.user,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = colorResource(R.color.blue_gray)
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
                 )
             }
         }

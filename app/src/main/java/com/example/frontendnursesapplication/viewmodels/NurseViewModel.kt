@@ -112,7 +112,7 @@ class NurseViewModel: ViewModel() {
         val nurses = _uiState.value.nurses
 
         val exists = nurses.any { it.email == nurse.email }
-        if (exists) {
+        if (exists || nurse.email.isEmpty() || nurse.name.isEmpty() || nurse.user.isEmpty() || nurse.password.isEmpty() || nurse.surname.isEmpty()) {
             _registerState.update { it.copy(error = true) }
         } else {
             _uiState.update {
@@ -120,5 +120,6 @@ class NurseViewModel: ViewModel() {
             }
             _registerState.update { it.copy(success = true) }
         }
+
     }
 }

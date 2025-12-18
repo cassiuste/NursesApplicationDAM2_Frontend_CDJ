@@ -186,11 +186,11 @@ fun titleLogin(navController: NavController) {
                             color = Color.Companion.Blue,
                             fontWeight = FontWeight.Companion.SemiBold
                         )
-                    ) {  // azul y sin negrita
+                    ) {
                         append(signUp)
                     }
                 },
-                style = MaterialTheme.typography.bodySmall,  // más pequeño
+                style = MaterialTheme.typography.bodySmall,
                 color = uiColor,
                 modifier = Modifier.Companion.padding(start = 35.dp, top = 8.dp)
                     .clickable {
@@ -205,7 +205,7 @@ fun titleLogin(navController: NavController) {
             contentScale = ContentScale.Companion.Fit,
             modifier = Modifier.Companion
                 .width(130.dp)
-                .padding(start = 50.dp)  // separación mínima
+                .padding(start = 50.dp)
         )
     }
 

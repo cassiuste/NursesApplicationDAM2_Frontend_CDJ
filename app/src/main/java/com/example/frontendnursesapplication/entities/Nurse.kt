@@ -5,5 +5,5 @@ data class Nurse(
     val surname: String,
     val email: String,
     val user: String,
-    val password: String
+    val pass: String
 )

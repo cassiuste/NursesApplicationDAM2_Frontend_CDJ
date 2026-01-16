@@ -1,20 +1,24 @@
 package com.example.frontendnursesapplication.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.frontendnursesapplication.entities.LoginUiState
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.entities.NurseUiState
 import com.example.frontendnursesapplication.entities.RegisterUiState
+import com.example.frontendnursesapplication.network.RetrofitClient
+import com.example.frontendnursesapplication.repository.NurseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class NurseViewModel: ViewModel() {
+
+    private val repository = NurseRepository(RetrofitClient.instance)
     private val _uiState = MutableStateFlow(NurseUiState())
-    // Evitem que sigui modificable desde fora el AppViewModel
     val uiState: StateFlow<NurseUiState> get()= _uiState.asStateFlow()
-    // en el init inicialitzem els valors
 
     private val _findByNameState = MutableStateFlow(NurseUiState())
     val findByNameState: StateFlow<NurseUiState> get() = _findByNameState.asStateFlow()
@@ -22,23 +26,15 @@ class NurseViewModel: ViewModel() {
     private val _loginState = MutableStateFlow(LoginUiState())
     val loginState: StateFlow<LoginUiState> get() = _loginState.asStateFlow()
 
-
     private val _registerState = MutableStateFlow(RegisterUiState())
     val registerState: StateFlow<RegisterUiState> get() = _registerState.asStateFlow()
 
     init {
-        _uiState.value = NurseUiState(mutableListOf(
-            Nurse("Juan", "Perez", "juan@mail.com", "juan123", "1234"),
-            Nurse("Pepe", "Lopez", "pepe@mail.com", "pepe45", "abcd"),
-            Nurse("Maria", "Gomez", "mariag@mail.com", "mariag", "pass"),
-            Nurse("Mar", "Sanchez", "marg@mail.com", "mar12", "123pass")))
+        _uiState.value = NurseUiState(nurses = emptyList())
         _findByNameState.value = NurseUiState(nurses = emptyList())
         _loginState.value = LoginUiState("","")
         _registerState.value = RegisterUiState()
     }
-
-    // actualitzem els valors creant una nova instancia de _uiState
-
 
     fun updateNurse(updatedNurse: Nurse) {
         _uiState.update { state ->
@@ -52,6 +48,15 @@ class NurseViewModel: ViewModel() {
 
 
     fun getAllNurses(): List<Nurse> {
+        viewModelScope.launch {
+            try {
+                val response = repository.getNurses()
+                _uiState.update { it.copy(nurses = response) }
+            } catch (e: Exception) {
+
+            }
+        }
+
         return _uiState.value.nurses
     }
 
@@ -98,7 +103,7 @@ class NurseViewModel: ViewModel() {
         val email = loginState.value.email
         val password = loginState.value.password
 
-        val nurse = nurses.find { it.email == email && it.password == password }
+        val nurse = nurses.find { it.email == email && it.pass == password }
 
         if (nurse != null){
             _loginState.update { it.copy(errorMessage = false, success = true) }
@@ -112,7 +117,7 @@ class NurseViewModel: ViewModel() {
         val nurses = _uiState.value.nurses
 
         val exists = nurses.any { it.email == nurse.email }
-        if (exists || nurse.email.isEmpty() || nurse.name.isEmpty() || nurse.user.isEmpty() || nurse.password.isEmpty() || nurse.surname.isEmpty()) {
+        if (exists || nurse.email.isEmpty() || nurse.name.isEmpty() || nurse.user.isEmpty() || nurse.pass.isEmpty() || nurse.surname.isEmpty()) {
             _registerState.update { it.copy(error = true) }
         } else {
             _uiState.update {

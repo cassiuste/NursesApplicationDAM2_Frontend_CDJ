@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontendnursesapplication.entities.Nurse
+import com.example.frontendnursesapplication.entities.NurseUiState
 import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 
 @Composable
@@ -86,6 +87,8 @@ fun AllNursesView (navController: NavHostController,
 fun NursesTable(modifier: Modifier, nurseViewModel: NurseViewModel) {
 
     val uiState by nurseViewModel.uiState.collectAsState()
+
+    nurseViewModel.getAllNurses()
 
     LazyColumn(
         modifier = modifier

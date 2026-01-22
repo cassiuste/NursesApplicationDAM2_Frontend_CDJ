@@ -20,7 +20,7 @@ interface NurseApiService {
     suspend fun updateNurse(
         @Path("id") id: Long,
         @Body nurse: Nurse
-    ): Response<Unit>
+    ): Response<Nurse>
 
     @POST("nurse")
     suspend fun registerNurse(

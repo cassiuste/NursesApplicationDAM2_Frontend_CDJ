@@ -19,17 +19,19 @@ class NurseViewModel: ViewModel() {
 
     private val repository = NurseRepository(RetrofitClient.instance)
 
+    
     private val _uiState = MutableStateFlow(NurseUiState())
     val uiState: StateFlow<NurseUiState> get() = _uiState.asStateFlow()
 
+    
     private val _findByNameState = MutableStateFlow(NurseUiState())
     val findByNameState: StateFlow<NurseUiState> get() = _findByNameState.asStateFlow()
 
+    
     private val _loginState = MutableStateFlow(LoginUiState())
     val loginState: StateFlow<LoginUiState> get() = _loginState.asStateFlow()
 
-
-    //Registro_State
+    
     private val _registerState = MutableStateFlow(RegisterUiState())
     val registerState: StateFlow<RegisterUiState> get() = _registerState.asStateFlow()
 
@@ -42,14 +44,13 @@ class NurseViewModel: ViewModel() {
 
     }
 
-
     fun getAllNurses(): List<Nurse> {
         viewModelScope.launch {
             try {
                 val response = repository.getNurses()
                 _uiState.update { it.copy(nurses = response) }
             } catch (e: Exception) {
-
+                Log.d("example", "response ERROR ${e.message} ${e.printStackTrace()}")
             }
         }
         return _uiState.value.nurses
@@ -63,7 +64,6 @@ class NurseViewModel: ViewModel() {
                     error = null
                 )
             }
-            return
         }
 
         val nurses = _uiState.value.nurses
@@ -84,8 +84,8 @@ class NurseViewModel: ViewModel() {
         _findByNameState.update { it.copy(nurses = emptyList(), error = null) }
     }
 
-    fun onEmailChange(email: String) {
-        _loginState.update { it.copy(email = email) }
+    fun onUserChange(user: String){
+        _loginState.update { it.copy(user = user) }
     }
 
     fun onPasswordChange(password: String) {
@@ -93,43 +93,34 @@ class NurseViewModel: ViewModel() {
         _loginState.update { it.copy(password = password) }
     }
 
-    fun login() {
-        val nurses = _uiState.value.nurses
-        val email = loginState.value.email
-        val password = loginState.value.password
-
-        val nurse = nurses.find { it.email == email && it.pass == password }
-
-        if (nurse != null) {
-            _loginState.update { it.copy(errorMessage = false, success = true) }
-        } else {
-            _loginState.update { it.copy(errorMessage = true) }
-        }
-    }
-
-
-
-    //Actualizar nurse
-    fun updateNurse(id: Long, nurse: Nurse) {
+    fun login(){
         viewModelScope.launch {
-            try {
-                val response = repository.updateNurse(id, nurse)
-
-                if (response.isSuccessful) {
-                    Log.d("PUT", "Nurse actualizada correctamente")
-                } else {
-                    Log.e("PUT", "Error al actualizar: ${response.code()}")
+            try{
+                val user = loginState.value.user
+                val password = loginState.value.password
+                val nurse = Nurse(name="", user = user, pass = password, email = "", surname = "")
+                val response = repository.login(nurse)
+                Log.d("example", "Login Correcto ${response.user}")
+                _loginState.update {
+                    it.copy(
+                        success = true,
+                        errorMessage = false
+                    )
                 }
-
             } catch (e: Exception) {
-                Log.e("PUT", "Excepción: ${e.message}")
+                Log.d("example", "ERROR in Login ${e.message} ${e.printStackTrace()}")
+                _loginState.update {
+                    it.copy(
+                        errorMessage = true,
+                        success = false
+                    )
+                }
             }
         }
     }
 
 
 
-    //Registrar
         fun register(nurse: Nurse) {
             viewModelScope.launch {
                 try {

@@ -21,7 +21,7 @@ fun AppNavigation(modifier: Modifier) {
 
     NavHost(
         navController = navController,
-        startDestination = "register"
+        startDestination = "login"
     ) {
         composable(route = "home") {
             InitialView(navController = navController)

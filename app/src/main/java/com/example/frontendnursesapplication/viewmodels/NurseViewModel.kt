@@ -18,33 +18,30 @@ import kotlinx.coroutines.launch
 class NurseViewModel: ViewModel() {
 
     private val repository = NurseRepository(RetrofitClient.instance)
-    private val _uiState = MutableStateFlow(NurseUiState())
-    val uiState: StateFlow<NurseUiState> get()= _uiState.asStateFlow()
 
+    
+    private val _uiState = MutableStateFlow(NurseUiState())
+    val uiState: StateFlow<NurseUiState> get() = _uiState.asStateFlow()
+
+    
     private val _findByNameState = MutableStateFlow(NurseUiState())
     val findByNameState: StateFlow<NurseUiState> get() = _findByNameState.asStateFlow()
 
+    
     private val _loginState = MutableStateFlow(LoginUiState())
     val loginState: StateFlow<LoginUiState> get() = _loginState.asStateFlow()
 
+    
     private val _registerState = MutableStateFlow(RegisterUiState())
     val registerState: StateFlow<RegisterUiState> get() = _registerState.asStateFlow()
 
+    //init
     init {
         _uiState.value = NurseUiState(nurses = emptyList())
         _findByNameState.value = NurseUiState(nurses = emptyList())
-        _loginState.value = LoginUiState("","")
+        _loginState.value = LoginUiState("", "")
         _registerState.value = RegisterUiState()
-    }
 
-    fun updateNurse(updatedNurse: Nurse) {
-        _uiState.update { state ->
-            state.copy(
-                nurses = state.nurses.map { nurse ->
-                    if (nurse.email == updatedNurse.email) updatedNurse else nurse
-                }
-            )
-        }
     }
 
     fun getAllNurses(): List<Nurse> {
@@ -60,7 +57,7 @@ class NurseViewModel: ViewModel() {
     }
 
     fun findByName(name: String) {
-        if(name.trim().isEmpty()){
+        if (name.trim().isEmpty()) {
             _findByNameState.update {
                 it.copy(
                     nurses = emptyList(),
@@ -91,7 +88,7 @@ class NurseViewModel: ViewModel() {
         _loginState.update { it.copy(user = user) }
     }
 
-    fun onPasswordChange(password: String){
+    fun onPasswordChange(password: String) {
 
         _loginState.update { it.copy(password = password) }
     }
@@ -122,17 +119,35 @@ class NurseViewModel: ViewModel() {
         }
     }
 
-    fun register(nurse: Nurse) {
-        val nurses = _uiState.value.nurses
-        val exists = nurses.any { it.email == nurse.email }
-        if (exists || nurse.email.isEmpty() || nurse.name.isEmpty() || nurse.user.isEmpty() || nurse.pass.isEmpty() || nurse.surname.isEmpty()) {
-            _registerState.update { it.copy(error = true) }
-        } else {
-            _uiState.update {
-                it.copy(nurses = it.nurses + nurse)
-            }
-            _registerState.update { it.copy(success = true) }
-        }
 
+
+        fun register(nurse: Nurse) {
+            viewModelScope.launch {
+                try {
+                    val response = repository.registerNurse(nurse)
+
+                    if (response.isSuccessful) {
+
+                        _registerState.value = RegisterUiState(success = true)
+
+                        Log.d("REGISTER", "Nurse registrada correctamente")
+                    } else {
+
+                        _registerState.value = RegisterUiState(
+                            error = "Error ${response.code()}"
+                        )
+                    }
+
+                } catch (e: Exception) {
+                    Log.e("REGISTER", "Excepción: ${e.message}")
+                }
+            }
+        }
     }
-}
+
+
+
+
+
+
+

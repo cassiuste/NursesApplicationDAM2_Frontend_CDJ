@@ -132,6 +132,8 @@ fun RegisterSection(navController: NavController,
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Companion.Medium))
         }
 
+
+
         if (registerState.success) {
             Toast.makeText(context, stringResource(id = R.string.NurseCreated), Toast.LENGTH_SHORT).show()
 
@@ -142,9 +144,9 @@ fun RegisterSection(navController: NavController,
                 }
             }
         }
-        if (registerState.error) {
+        /*if (registerState.error) {
             Toast.makeText(context, stringResource(id = R.string.EmailExists), Toast.LENGTH_SHORT).show()
-        }
+        }*/
     }
 }
 

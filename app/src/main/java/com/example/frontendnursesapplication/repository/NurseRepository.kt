@@ -7,4 +7,8 @@ class NurseRepository(private val apiService: NurseApiService) {
     suspend fun getNurses(): List<Nurse> {
         return apiService.getNurses()
     }
+
+    suspend fun login(nurse: Nurse): Nurse{
+        return apiService.login(nurse)
+    }
 }

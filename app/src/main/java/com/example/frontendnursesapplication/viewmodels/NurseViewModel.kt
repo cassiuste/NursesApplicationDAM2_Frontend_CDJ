@@ -1,5 +1,6 @@
 package com.example.frontendnursesapplication.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frontendnursesapplication.entities.LoginUiState
@@ -46,17 +47,15 @@ class NurseViewModel: ViewModel() {
         }
     }
 
-
     fun getAllNurses(): List<Nurse> {
         viewModelScope.launch {
             try {
                 val response = repository.getNurses()
                 _uiState.update { it.copy(nurses = response) }
             } catch (e: Exception) {
-
+                Log.d("example", "response ERROR ${e.message} ${e.printStackTrace()}")
             }
         }
-
         return _uiState.value.nurses
     }
 
@@ -68,7 +67,6 @@ class NurseViewModel: ViewModel() {
                     error = null
                 )
             }
-            return
         }
 
         val nurses = _uiState.value.nurses
@@ -89,8 +87,8 @@ class NurseViewModel: ViewModel() {
         _findByNameState.update { it.copy(nurses = emptyList(), error = null) }
     }
 
-    fun onEmailChange(email: String){
-        _loginState.update { it.copy(email = email) }
+    fun onUserChange(user: String){
+        _loginState.update { it.copy(user = user) }
     }
 
     fun onPasswordChange(password: String){
@@ -99,23 +97,33 @@ class NurseViewModel: ViewModel() {
     }
 
     fun login(){
-        val nurses = _uiState.value.nurses
-        val email = loginState.value.email
-        val password = loginState.value.password
-
-        val nurse = nurses.find { it.email == email && it.pass == password }
-
-        if (nurse != null){
-            _loginState.update { it.copy(errorMessage = false, success = true) }
-        }
-        else{
-            _loginState.update { it.copy(errorMessage = true) }
+        viewModelScope.launch {
+            try{
+                val user = loginState.value.user
+                val password = loginState.value.password
+                val nurse = Nurse(name="", user = user, pass = password, email = "", surname = "")
+                val response = repository.login(nurse)
+                Log.d("example", "Login Correcto ${response.user}")
+                _loginState.update {
+                    it.copy(
+                        success = true,
+                        errorMessage = false
+                    )
+                }
+            } catch (e: Exception) {
+                Log.d("example", "ERROR in Login ${e.message} ${e.printStackTrace()}")
+                _loginState.update {
+                    it.copy(
+                        errorMessage = true,
+                        success = false
+                    )
+                }
+            }
         }
     }
 
     fun register(nurse: Nurse) {
         val nurses = _uiState.value.nurses
-
         val exists = nurses.any { it.email == nurse.email }
         if (exists || nurse.email.isEmpty() || nurse.name.isEmpty() || nurse.user.isEmpty() || nurse.pass.isEmpty() || nurse.surname.isEmpty()) {
             _registerState.update { it.copy(error = true) }

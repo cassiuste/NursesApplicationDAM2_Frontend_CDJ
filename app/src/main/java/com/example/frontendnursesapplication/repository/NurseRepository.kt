@@ -5,8 +5,8 @@ import com.example.frontendnursesapplication.network.NurseApiService
 import retrofit2.Response
 
 class NurseRepository(private val apiService: NurseApiService) {
-    suspend fun getNurses(): List<Nurse> {
-        return apiService.getNurses()
+    suspend fun getAll(): List<Nurse> {
+        return apiService.getAll()
     }
     suspend fun updateNurse(id: Long, nurse: Nurse): Response<Nurse> {
         return apiService.updateNurse(id, nurse)

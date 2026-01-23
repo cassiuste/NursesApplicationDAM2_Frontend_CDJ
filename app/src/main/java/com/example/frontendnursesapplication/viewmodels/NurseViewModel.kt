@@ -44,16 +44,21 @@ class NurseViewModel: ViewModel() {
 
     }
 
-    fun getAllNurses(): List<Nurse> {
+    fun getAllNurses(){
         viewModelScope.launch {
             try {
-                val response = repository.getNurses()
-                _uiState.update { it.copy(nurses = response) }
+                val response = repository.getAll()
+                _uiState.value = _uiState.value.copy(
+                    nurses = response,
+                    error = null
+                )
             } catch (e: Exception) {
                 Log.d("example", "response ERROR ${e.message} ${e.printStackTrace()}")
+                _uiState.value = _uiState.value.copy(
+                    error = "Error"
+                )
             }
         }
-        return _uiState.value.nurses
     }
 
     fun findByName(name: String) {

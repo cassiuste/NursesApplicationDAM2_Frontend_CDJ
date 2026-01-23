@@ -84,9 +84,8 @@ fun AllNursesView (navController: NavHostController,
 @Composable
 fun NursesTable(modifier: Modifier, nurseViewModel: NurseViewModel) {
 
-    val uiState by nurseViewModel.uiState.collectAsState()
-
     nurseViewModel.getAllNurses()
+    val uiState by nurseViewModel.uiState.collectAsState()
 
     LazyColumn(
         modifier = modifier
@@ -95,7 +94,6 @@ fun NursesTable(modifier: Modifier, nurseViewModel: NurseViewModel) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(20.dp)
     ) {
-
 
         items(uiState.nurses) { nurse ->
             NurseCard(nurse = nurse)
@@ -185,4 +183,3 @@ fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
         }
     }
 }
-

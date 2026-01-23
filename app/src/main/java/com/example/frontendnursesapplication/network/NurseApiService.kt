@@ -11,7 +11,7 @@ import retrofit2.http.Path
 
 interface NurseApiService {
     @GET("nurse/index")
-    suspend fun getNurses(): List<Nurse>
+    suspend fun getAll(): List<Nurse>
 
     @Headers("Accept: application/json","Content-Type: application/json")
     @POST("nurse/login")

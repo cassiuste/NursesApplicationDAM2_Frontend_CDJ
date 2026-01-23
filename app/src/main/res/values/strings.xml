@@ -27,6 +27,8 @@
     <string name="CreateAccount">Create nurse Account</string>
     <string name="Email">Email</string>
     <string name="Password">Password</string>
+    <string name="Error">Error</string>
+
     <string name="title_init">¡Bienvenido al Hospital STUCOM!</string>
     <string name="button_info_list_all_nurses">Lista de Enfermer@s</string>
 

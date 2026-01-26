@@ -7,6 +7,7 @@ import com.example.frontendnursesapplication.entities.LoginUiState
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.entities.NurseUiState
 import com.example.frontendnursesapplication.entities.RegisterUiState
+import com.example.frontendnursesapplication.entities.SessionUiState
 import com.example.frontendnursesapplication.network.RetrofitClient
 import com.example.frontendnursesapplication.repository.NurseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,9 @@ class NurseViewModel: ViewModel() {
 
     private val repository = NurseRepository(RetrofitClient.instance)
 
-    
+    private val _sessionState = MutableStateFlow(SessionUiState())
+    val sessionState: StateFlow<SessionUiState> = _sessionState.asStateFlow()
+
     private val _uiState = MutableStateFlow(NurseUiState())
     val uiState: StateFlow<NurseUiState> get() = _uiState.asStateFlow()
 
@@ -35,7 +38,6 @@ class NurseViewModel: ViewModel() {
     private val _registerState = MutableStateFlow(RegisterUiState())
     val registerState: StateFlow<RegisterUiState> get() = _registerState.asStateFlow()
 
-    //init
     init {
         _uiState.value = NurseUiState(nurses = emptyList())
         _findByNameState.value = NurseUiState(nurses = emptyList())
@@ -106,12 +108,19 @@ class NurseViewModel: ViewModel() {
                 val nurse = Nurse(name="", user = user, pass = password, email = "", surname = "")
                 val response = repository.login(nurse)
                 Log.d("example", "Login Correcto ${response.user}")
+
+                _sessionState.value = SessionUiState(
+                    nurse = response,
+                    isLogged = true
+                )
+
                 _loginState.update {
                     it.copy(
                         success = true,
                         errorMessage = false
                     )
                 }
+
             } catch (e: Exception) {
                 Log.d("example", "ERROR in Login ${e.message} ${e.printStackTrace()}")
                 _loginState.update {
@@ -131,7 +140,12 @@ class NurseViewModel: ViewModel() {
                 try {
                     val response = repository.registerNurse(nurse)
 
-                    if (response.isSuccessful) {
+                    if (response.isSuccessful && response.body() != null) {
+
+                        _sessionState.value = SessionUiState(
+                            nurse = response.body(),
+                            isLogged = true
+                        )
 
                         _registerState.value = RegisterUiState(success = true)
 

@@ -8,6 +8,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface NurseApiService {
     @GET("nurse/index")
@@ -26,5 +27,12 @@ interface NurseApiService {
     suspend fun registerNurse(
         @Body nurse: Nurse
     ): Response<Nurse>
+
+
+    @GET("nurse/name")
+    suspend fun findNurseByName(
+        @Query("name") name: String
+    ): Response<Nurse>
+
 
 }

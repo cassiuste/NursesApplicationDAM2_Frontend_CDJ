@@ -19,6 +19,10 @@ class NurseRepository(private val apiService: NurseApiService) {
     suspend fun registerNurse(nurse: Nurse): Response<Nurse> {
         return apiService.registerNurse(nurse)
     }
+    suspend fun findbyname(name: String): Response<Nurse> {
+        return apiService.findNurseByName(name)
+    }
+
 
 
 

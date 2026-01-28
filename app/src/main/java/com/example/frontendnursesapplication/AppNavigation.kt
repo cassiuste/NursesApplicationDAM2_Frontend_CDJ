@@ -12,6 +12,7 @@ import com.example.frontendnursesapplication.views.AllNursesView
 import com.example.frontendnursesapplication.views.FindByName
 import com.example.frontendnursesapplication.views.InitialView
 import com.example.frontendnursesapplication.views.LoginScreen
+import com.example.frontendnursesapplication.views.ProfileView
 import com.example.frontendnursesapplication.views.RegisterScreen
 
 @Composable
@@ -21,7 +22,7 @@ fun AppNavigation(modifier: Modifier) {
 
     NavHost(
         navController = navController,
-        startDestination = "listAll"
+        startDestination = "login"
     ) {
         composable(route = "home") {
             InitialView(navController = navController)
@@ -33,6 +34,10 @@ fun AppNavigation(modifier: Modifier) {
 
         composable(route = "register") {
             RegisterScreen(navController = navController, nurseViewModel)
+        }
+
+        composable(route = "profile") {
+            ProfileView(navController = navController, nurseViewModel)
         }
 
         composable(route = "findByName") {

@@ -46,7 +46,6 @@ class NurseViewModel: ViewModel() {
         }
     }
 
-
     fun getAllNurses(): List<Nurse> {
         viewModelScope.launch {
             try {

@@ -1,8 +1,12 @@
 package com.example.frontendnursesapplication.viewmodels
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.frontendnursesapplication.entities.FindNameUiState
 import com.example.frontendnursesapplication.entities.LoginUiState
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.entities.NurseUiState
@@ -26,11 +30,13 @@ class NurseViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(NurseUiState())
     val uiState: StateFlow<NurseUiState> get() = _uiState.asStateFlow()
 
-    
-    private val _findByNameState = MutableStateFlow(NurseUiState())
-    val findByNameState: StateFlow<NurseUiState> get() = _findByNameState.asStateFlow()
 
-    
+    var _findByNameState: FindNameUiState
+            by mutableStateOf(FindNameUiState.Idle)
+        private set
+
+
+
     private val _loginState = MutableStateFlow(LoginUiState())
     val loginState: StateFlow<LoginUiState> get() = _loginState.asStateFlow()
 
@@ -40,7 +46,6 @@ class NurseViewModel: ViewModel() {
 
     init {
         _uiState.value = NurseUiState(nurses = emptyList())
-        _findByNameState.value = NurseUiState(nurses = emptyList())
         _loginState.value = LoginUiState("", "")
         _registerState.value = RegisterUiState()
 
@@ -64,31 +69,30 @@ class NurseViewModel: ViewModel() {
     }
 
     fun findByName(name: String) {
-        if (name.trim().isEmpty()) {
-            _findByNameState.update {
-                it.copy(
-                    nurses = emptyList(),
-                    error = null
-                )
+        viewModelScope.launch {
+            _findByNameState = FindNameUiState.Loading
+            try {
+                val response = repository.findbyname(name)
+
+                _findByNameState = if (response.isSuccessful) {
+                    val nurse = response.body()
+                    if (nurse != null)
+                        FindNameUiState.Success(nurse)
+                    else
+                        FindNameUiState.NotFound
+                } else {
+                    FindNameUiState.Error
+                }
+
+            } catch (e: Exception) {
+                _findByNameState = FindNameUiState.Error
             }
-        }
-
-        val nurses = _uiState.value.nurses
-
-        val results = nurses.filter { nurse ->
-            nurse.name.contains(name.trim(), ignoreCase = true)
-        }
-
-        _findByNameState.update {
-            it.copy(
-                nurses = results,
-                error = if (results.isEmpty()) "No se ha encontrado ningun Nurse con el nombre \"${name.trim()}\"" else null
-            )
         }
     }
 
+
     fun clearResults() {
-        _findByNameState.update { it.copy(nurses = emptyList(), error = null) }
+        _findByNameState = FindNameUiState.Idle
     }
 
     fun onUserChange(user: String){

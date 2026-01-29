@@ -1,5 +1,6 @@
 package com.example.frontendnursesapplication.views
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontendnursesapplication.components.TopBar
 import com.example.frontendnursesapplication.entities.Nurse
@@ -174,14 +176,30 @@ fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
                         )
                     }
                 }
-                Image(
-                    painter = painterResource(id = R.drawable.equipomedico),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                )
+                NurseImage(nurse.imageUrl)
             }
         }
     }
+}
+
+@Composable
+fun NurseImage(
+    imageUrl: String,
+    modifier: Modifier = Modifier
+) {
+    val painter =
+        if (imageUrl.isNotEmpty()) {
+            rememberAsyncImagePainter(
+                "http://10.0.2.2:8080/nurse/uploads/$imageUrl"
+            )
+        } else {
+            painterResource(R.drawable.enfermero)
+        }
+    Image(
+        painter = painter,
+        contentDescription = null,
+        modifier = modifier
+            .size(48.dp)
+            .clip(CircleShape)
+    )
 }

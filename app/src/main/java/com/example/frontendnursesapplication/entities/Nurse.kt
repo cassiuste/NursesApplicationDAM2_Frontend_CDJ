@@ -1,9 +1,11 @@
 package com.example.frontendnursesapplication.entities
 
 data class Nurse(
+    val id: Long? = null,
     val name: String,
     val surname: String,
     val email: String,
     val user: String,
-    val pass: String
+    val pass: String,
+    val imageUrl: String = ""
 )

@@ -103,7 +103,7 @@ fun RegisterSection(navController: NavController,
                         surname = surnameState.value,
                         email = emailState.value,
                         user = userState.value,
-                        pass = passwordState.value
+                        pass = passwordState.value,
                     )
                 )
             },

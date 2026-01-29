@@ -1,5 +1,7 @@
 package com.example.frontendnursesapplication.entities
 
 data class RegisterUiState(
-    val error: Boolean = false,
-    val success: Boolean = false)
+val loading: Boolean = false,
+val success: Boolean = false,
+val error: String? = null
+)

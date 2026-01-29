@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -38,13 +39,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.frontendnursesapplication.R
 import com.example.frontendnursesapplication.components.TopBar
+import com.example.frontendnursesapplication.entities.FindNameUiState
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 
 @Composable
 fun FindByName(navController: NavController, nurseViewModel: NurseViewModel){
-    val findByNameState by nurseViewModel.findByNameState.collectAsState()
-
+    val findByNameState = nurseViewModel._findByNameState
     var search by remember { mutableStateOf("") }
 
     Column(
@@ -73,77 +74,40 @@ fun FindByName(navController: NavController, nurseViewModel: NurseViewModel){
         Spacer(modifier = Modifier.height(20.dp))
 
 
-        Column(
-            modifier = Modifier.padding(20.dp, 10.dp)
-        ) {
-            TextField(
-                value = search,
-                onValueChange = { search = it },
-                label = { Text(
-                    stringResource(R.string.write_name)
-                ) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        if (search.trim().isNotEmpty()) {
-                            nurseViewModel.findByName(search)
-                        }
-                    }
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-
-            findByNameState.error?.let { errorMsg ->
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(
-                        text = errorMsg,
-                        color = colorResource(R.color.redstucom),
-                        modifier = Modifier.padding(top = 10.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
+        when (findByNameState) {
+            is FindNameUiState.Idle -> {
+                Text("Introduce un nombre para buscar")
             }
 
-            Column (modifier = Modifier.weight(1f).padding(top = 20.dp)){
-                if (findByNameState.nurses.isNotEmpty()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(colorResource(R.color.pinkstucom).copy(alpha = 0.15f))
-                            .padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("Name", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                        Text("Surname", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                        Text("User", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                        Text("Email", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                    }
-                    LazyColumn(modifier = Modifier
-                        .weight(1f)
-                        .padding(5.dp))
-                    {
-                        items(findByNameState.nurses){ nurse ->
-                            PrintNurse(nurse)
-                        }
-                    }
+            is FindNameUiState.Loading -> {
+                CircularProgressIndicator()
+            }
+
+            is FindNameUiState.Error -> {
+                Text(
+                    "Error al buscar",
+                    color = colorResource(R.color.redstucom)
+                )
+            }
+
+            is FindNameUiState.NotFound -> {
+                Text(
+                    "No se encontró la enfermera",
+                    color = colorResource(R.color.redstucom)
+                )
+            }
+
+            is FindNameUiState.Success -> {
+                val nurse =
+                    (findByNameState as FindNameUiState.Success).nurse
+
+                Column {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    PrintNurse(nurse)
 
                     Button(
                         onClick = { nurseViewModel.clearResults() },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(R.color.pinkstucom),
-                            contentColor = colorResource(R.color.whitestucom)
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp, start = 8.dp, end = 8.dp)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(stringResource(R.string.clear_response))
                     }
@@ -151,6 +115,9 @@ fun FindByName(navController: NavController, nurseViewModel: NurseViewModel){
             }
             HomeButton(navController)
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+        HomeButton(navController)
     }
 }
 

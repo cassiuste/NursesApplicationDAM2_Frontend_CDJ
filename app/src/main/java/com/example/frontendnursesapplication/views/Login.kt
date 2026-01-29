@@ -208,10 +208,6 @@ fun titleLogin(navController: NavController) {
                 .padding(start = 50.dp)
         )
     }
-
-
-
-
 }
 
 
@@ -221,7 +217,7 @@ fun LoginSection(navController: NavController,
                  nurseViewModel: NurseViewModel){
 
     val uiState = nurseViewModel.loginState.collectAsState().value
-    val emailState = remember { mutableStateOf("") }
+    val userState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
 
     val context = LocalContext.current
@@ -230,15 +226,15 @@ fun LoginSection(navController: NavController,
     val bluegray = colorResource(id = R.color.blue_gray)
 
     val correctoText = stringResource(id = R.string.correcto)
-    val email = stringResource(id = R.string.Email)
+    val user = stringResource(id = R.string.User)
     val password = stringResource(id = R.string.Password)
 
 
     Column() {
         LoginTextField(
-            label = email,
+            label = user,
             trailing = "",
-            textState = emailState
+            textState = userState
         )
 
         Spacer(modifier = Modifier.Companion.height(10.dp))
@@ -268,7 +264,7 @@ fun LoginSection(navController: NavController,
                 .fillMaxWidth()
                 .height(40.dp),
             onClick = {
-                nurseViewModel.onEmailChange(emailState.value)
+                nurseViewModel.onUserChange(userState.value)
                 nurseViewModel.onPasswordChange(passwordState.value)
                 nurseViewModel.login()
             },

@@ -1,13 +1,17 @@
 <resources>
     <string name="app_name">FrontendNursesApplication</string>
-    <string name="find_by_name">Find Nurse By Name</string>
-    <string name="write_name">Write the name</string>
+    <string name="find_by_name">Buscador de Enfermer@s</string>
+    <string name="write_name">Escribe el nombre</string>
     <string name="could_not_found_nurse">Could not found the nurse</string>
     <string name="clear_response">Clear Response</string>
     <string name="Name">Name</string>
     <string name="Surname">Surname</string>
     <string name="User">User</string>
+    <string name="we_are">We Are</string>
     <string name="hospital">Stucom</string>
+    <string name="specialist">Specialist</string>
+    <string name="dentist">Dentist</string>
+
     <string name="slogan">Always with you</string>
     <string name="login">Login</string>
     <string name="app_logo">HospitalStucom Logo</string>
@@ -34,4 +38,18 @@
 
     <string name="title_allnurses_view">Listado de todos los enfermer@s</string>
     <string name="button_info_return_home">Volver al Home</string>
+
+    <string name="my_profile">Mi Perfil</string>
+
+    <string name="pers_info_title">Información Personal</string>
+
+    <string name="label_name">Nombre</string>
+    <string name="label_surname">Apellidos</string>
+    <string name="label_email">Correo Electrónico</string>
+    <string name="label_user">Usuario</string>
+    <string name="label_password">Contraseña</string>
+
+    <string name="btn_modify">Modificar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="btn_save_changes">Guardar Cambios</string>
 </resources>

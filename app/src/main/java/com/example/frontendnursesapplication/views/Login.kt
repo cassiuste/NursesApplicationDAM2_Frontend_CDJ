@@ -347,8 +347,8 @@ fun Modifier.socialMedia(): Modifier = composed {
 
 @Composable
 fun TopSection() {
-           val uiColor =
-                if (isSystemInDarkTheme()) Color.Companion.White else Color.Companion.Black //Para que tu texto, icono o logo siempre tenga buen contraste dependiendo del tema.
+    val uiColor =
+        if (isSystemInDarkTheme()) Color.Companion.White else Color.Companion.Black
 
     Box(
         modifier = Modifier.Companion.fillMaxWidth(),

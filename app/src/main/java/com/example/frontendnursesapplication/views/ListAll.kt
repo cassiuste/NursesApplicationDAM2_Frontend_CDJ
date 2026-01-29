@@ -41,6 +41,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.frontendnursesapplication.components.TopBar
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 
@@ -51,9 +53,9 @@ fun AllNursesView (navController: NavHostController,
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-
         ) {
-        TopSection()
+
+        TopBar(onBack = {navController.navigate("profile")})
 
         Text(
             text = stringResource(R.string.title_allnurses_view),
@@ -74,7 +76,7 @@ fun AllNursesView (navController: NavHostController,
         Button(onClick = {
             navController.popBackStack()
         },
-            modifier = Modifier.fillMaxWidth().padding(20.dp).padding(bottom = 20.dp)) {
+            modifier = Modifier.fillMaxWidth().padding(20.dp).padding(bottom = 20.dp).padding(horizontal = 20.dp)) {
 
             Text(text = stringResource(R.string.button_info_return_home))
         }

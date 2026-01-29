@@ -31,11 +31,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.frontendnursesapplication.R
+import com.example.frontendnursesapplication.components.TopBar
 import com.example.frontendnursesapplication.entities.FindNameUiState
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.viewmodels.NurseViewModel
@@ -46,11 +49,14 @@ fun FindByName(navController: NavController, nurseViewModel: NurseViewModel){
     var search by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 8.dp, end = 20.dp, start = 20.dp, bottom = 20.dp)
-    ) {
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
 
+        TopBar(onBack = {
+            navController.navigate("Profile")
+        })
 
         Spacer(modifier = Modifier.height(33.dp))
 
@@ -59,6 +65,7 @@ fun FindByName(navController: NavController, nurseViewModel: NurseViewModel){
         ) {
             Text(
                 text = stringResource(R.string.find_by_name),
+                fontWeight = FontWeight.Bold, fontSize = 25.sp,
                 modifier = Modifier.padding(bottom = 16.dp, end = 10.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -66,26 +73,6 @@ fun FindByName(navController: NavController, nurseViewModel: NurseViewModel){
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // TextField donde el usuario escribe un nombre
-        TextField(
-            value = search,
-            onValueChange = { search = it },
-            label = { Text(
-                stringResource(R.string.write_name)
-            ) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    if (search.trim().isNotEmpty()) {
-                        nurseViewModel.findByName(search)
-                    }
-                }
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
 
         when (findByNameState) {
             is FindNameUiState.Idle -> {
@@ -126,6 +113,7 @@ fun FindByName(navController: NavController, nurseViewModel: NurseViewModel){
                     }
                 }
             }
+            HomeButton(navController)
         }
 
         Spacer(modifier = Modifier.weight(1f))

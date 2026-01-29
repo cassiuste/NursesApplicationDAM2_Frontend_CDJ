@@ -143,7 +143,7 @@ fun NurseForm(
         if (isEditable) {
             Button(
                 onClick = {
-                    onSave(Nurse(name, surname, email, user, pass))
+                    onSave(Nurse(name=name, surname = surname, email = email, user = user, pass = pass))
                     isEditable = false
                 },
                 modifier = Modifier.align(Alignment.End),

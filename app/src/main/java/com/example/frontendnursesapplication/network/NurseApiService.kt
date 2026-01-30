@@ -28,7 +28,6 @@ interface NurseApiService {
         @Body nurse: Nurse
     ): Response<Nurse>
 
-
     @GET("nurse/name")
     suspend fun findNurseByName(
         @Query("name") name: String

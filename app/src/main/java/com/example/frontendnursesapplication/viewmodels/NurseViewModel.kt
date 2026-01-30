@@ -6,7 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.frontendnursesapplication.entities.FindNameUiState
+import com.example.frontendnursesapplication.entities.FindByNameUiSate
+import com.example.frontendnursesapplication.entities.ListAllUiState
 import com.example.frontendnursesapplication.entities.LoginUiState
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.entities.NurseUiState
@@ -27,12 +28,15 @@ class NurseViewModel: ViewModel() {
     private val _sessionState = MutableStateFlow(SessionUiState())
     val sessionState: StateFlow<SessionUiState> = _sessionState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(NurseUiState())
-    val uiState: StateFlow<NurseUiState> get() = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<ListAllUiState>(ListAllUiState.Idle)
+    val uiState: StateFlow<ListAllUiState> get() = _uiState.asStateFlow()
 
 
-    var _findByNameState: FindNameUiState
-            by mutableStateOf(FindNameUiState.Idle)
+
+    var _findByNameState by mutableStateOf<FindByNameUiSate>(FindByNameUiSate.Idle)
+        private set
+
+    var _ListAllSate by mutableStateOf<ListAllUiState>(ListAllUiState.Idle)
         private set
 
 
@@ -45,54 +49,56 @@ class NurseViewModel: ViewModel() {
     val registerState: StateFlow<RegisterUiState> get() = _registerState.asStateFlow()
 
     init {
-        _uiState.value = NurseUiState(nurses = emptyList())
+        _uiState.value = ListAllUiState.Idle
         _loginState.value = LoginUiState("", "")
         _registerState.value = RegisterUiState()
-
+        getAllNurses()
     }
 
-    fun getAllNurses(){
+    fun getAllNurses() {
         viewModelScope.launch {
+            _uiState.value = ListAllUiState.Loading
             try {
-                val response = repository.getAll()
-                _uiState.value = _uiState.value.copy(
-                    nurses = response,
-                    error = null
-                )
+                val nurses = repository.getAll()
+                _uiState.value = if (nurses.isNotEmpty()) {
+                    ListAllUiState.Success(nurses)
+                } else {
+                    ListAllUiState.NotFound
+                }
             } catch (e: Exception) {
-                Log.d("example", "response ERROR ${e.message} ${e.printStackTrace()}")
-                _uiState.value = _uiState.value.copy(
-                    error = "Error"
-                )
+                _uiState.value = ListAllUiState.Error
+                Log.e("NurseViewModel", "Error en getAllNurses: ${e.message}", e)
             }
         }
     }
 
+
+
     fun findByName(name: String) {
         viewModelScope.launch {
-            _findByNameState = FindNameUiState.Loading
+            _findByNameState = FindByNameUiSate.Loading
             try {
                 val response = repository.findbyname(name)
 
                 _findByNameState = if (response.isSuccessful) {
                     val nurse = response.body()
                     if (nurse != null)
-                        FindNameUiState.Success(nurse)
+                        FindByNameUiSate.Success(nurse)
                     else
-                        FindNameUiState.NotFound
+                        FindByNameUiSate.NotFound
                 } else {
-                    FindNameUiState.NotFound
+                    FindByNameUiSate.NotFound
                 }
 
             } catch (e: Exception) {
-                _findByNameState = FindNameUiState.Error
+                _findByNameState = FindByNameUiSate.Error
             }
         }
     }
 
 
     fun clearResults() {
-        _findByNameState = FindNameUiState.Idle
+        _findByNameState = FindByNameUiSate.Idle
     }
 
     fun onUserChange(user: String){
@@ -136,8 +142,6 @@ class NurseViewModel: ViewModel() {
             }
         }
     }
-
-
 
         fun register(nurse: Nurse) {
             viewModelScope.launch {

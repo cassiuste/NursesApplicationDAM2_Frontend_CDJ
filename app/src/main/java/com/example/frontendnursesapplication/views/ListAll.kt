@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
@@ -45,12 +46,16 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontendnursesapplication.components.TopBar
+import com.example.frontendnursesapplication.entities.FindByNameUiSate
+import com.example.frontendnursesapplication.entities.ListAllUiState
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 
 @Composable
 fun AllNursesView (navController: NavHostController,
                    nurseViewModel: NurseViewModel) {
+
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -84,26 +89,81 @@ fun AllNursesView (navController: NavHostController,
         }
     }
 }
-
 @Composable
-fun NursesTable(modifier: Modifier, nurseViewModel: NurseViewModel) {
-
-    nurseViewModel.getAllNurses()
+fun NursesTable(
+    modifier: Modifier = Modifier,
+    nurseViewModel: NurseViewModel
+) {
     val uiState by nurseViewModel.uiState.collectAsState()
+    val currentState = uiState
+    when (currentState) {
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(10.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(20.dp)
-    ) {
+        is ListAllUiState.Idle -> {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Esperando...")
+            }
+        }
 
-        items(uiState.nurses) { nurse ->
-            NurseCard(nurse = nurse)
+        is ListAllUiState.Loading -> {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is ListAllUiState.NotFound -> {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("No se encontraron enfermeras")
+            }
+        }
+
+        is ListAllUiState.Error -> {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Error al cargar datos", color = Color.Red)
+            }
+        }
+
+        is ListAllUiState.Success -> {
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(20.dp)
+            ) {
+                items(currentState.nurses) { nurse ->
+                    NurseCard(nurse = nurse)
+                }
+            }
         }
     }
 }
+
+
+
 
 @Composable
 fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
@@ -176,7 +236,7 @@ fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
                         )
                     }
                 }
-                NurseImage(nurse.imageUrl)
+                NurseImage(nurse = nurse, nurseViewModel = nurseViewModel)
             }
         }
     }
@@ -184,22 +244,56 @@ fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
 
 @Composable
 fun NurseImage(
-    imageUrl: String,
+    nurse: Nurse,
+    nurseViewModel: NurseViewModel,
     modifier: Modifier = Modifier
 ) {
-    val painter =
-        if (imageUrl.isNotEmpty()) {
-            rememberAsyncImagePainter(
-                "http://10.0.2.2:8080/nurse/uploads/$imageUrl"
-            )
-        } else {
-            painterResource(R.drawable.enfermero)
+
+    val listAllUiState = nurseViewModel._ListAllSate
+    Column(
+        modifier = Modifier.padding(top = 20.dp).fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        when (listAllUiState) {
+            is ListAllUiState.Idle,
+            is ListAllUiState.Error,
+            is ListAllUiState.NotFound,
+            is ListAllUiState.Loading -> {
+
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Placeholder",
+                    modifier = modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                )
+            }
+
+            is ListAllUiState.Success -> {
+
+                if (nurse.imageUrl.isNotEmpty()) {
+                    val painter = rememberAsyncImagePainter(
+                        "http://10.0.2.2:8080/nurse/uploads/${nurse.imageUrl}"
+                    )
+                    Image(
+                        painter = painter,
+                        contentDescription = "Imagen de ${nurse.name}",
+                        modifier = modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                    )
+                } else {
+
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Placeholder",
+                        modifier = modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                    )
+                }
+            }
         }
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = modifier
-            .size(48.dp)
-            .clip(CircleShape)
-    )
+    }
 }

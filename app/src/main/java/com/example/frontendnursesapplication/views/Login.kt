@@ -88,7 +88,7 @@ fun LoginScreen(navController: NavController,
 
                 Column(horizontalAlignment = Alignment.Companion.CenterHorizontally) {
                     Text(
-                        text = "Or continue with",
+                        text = "O continuar con",
                         style = MaterialTheme.typography.labelMedium.copy(color = Color(0xFF64748B))
                     )
                     Spacer(modifier = Modifier.Companion.height(10.dp))
@@ -128,7 +128,7 @@ fun titleLogin(navController: NavController) {
 
     val uiColor = if (isSystemInDarkTheme()) Color.Companion.White else Color.Companion.Black
     val title1 = stringResource(id = R.string.login_title1)
-    val title2 = "your "
+    val title2 = "tu "
     val account = stringResource(id = R.string.onlyaccount)
     val signUpText = stringResource(id = R.string.account)
     val signUp = stringResource(id = R.string.SignUp)
@@ -152,7 +152,7 @@ fun titleLogin(navController: NavController) {
                 fontSize = 27.sp,
                 style = MaterialTheme.typography.headlineMedium,
                 color = uiColor,
-                modifier = Modifier.Companion.padding(start = 60.dp)
+                modifier = Modifier.Companion.padding(start = 36.dp)
             )
 
             Text(
@@ -181,12 +181,14 @@ fun titleLogin(navController: NavController) {
             Text(
                 text = buildAnnotatedString {
                     append(signUpText)
+                    append(" ")
                     withStyle(
                         style = SpanStyle(
                             color = Color.Companion.Blue,
                             fontWeight = FontWeight.Companion.SemiBold
                         )
                     ) {
+                        Spacer(modifier = Modifier.width(10.dp))
                         append(signUp)
                     }
                 },

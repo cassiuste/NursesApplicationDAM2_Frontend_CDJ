@@ -93,7 +93,7 @@ fun NurseForm(
             Button(
                 onClick = { isEditable = !isEditable },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isEditable) Color.Gray else colorResource(R.color.purple_500)
+                    containerColor = if (isEditable) Color.Gray else colorResource(R.color.purple_btn)
                 )
             ) {
                 Text(if (isEditable) stringResource(R.string.btn_cancel) else stringResource(R.string.btn_modify))
@@ -146,8 +146,7 @@ fun NurseForm(
                     onSave(Nurse(name=name, surname = surname, email = email, user = user, pass = pass))
                     isEditable = false
                 },
-                modifier = Modifier.align(Alignment.End),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.purple_500))
+                modifier = Modifier.align(Alignment.End)
             ) {
                 Text(stringResource(R.string.btn_save_changes))
             }

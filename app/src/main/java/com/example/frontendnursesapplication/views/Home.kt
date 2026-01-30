@@ -60,8 +60,8 @@ private data class MenuItem(
 fun HomeBody(navController: NavHostController){
 
     val menuItems = listOf(
-        MenuItem("Listado Completo", "listAll", R.drawable.enfermeros2),
-        MenuItem("Buscar Enfermer@", "findByName", R.drawable.searchenfermeros)
+        MenuItem(stringResource(R.string.list_all_nurses_home_btn), "listAll", R.drawable.enfermeros2),
+        MenuItem(stringResource(R.string.search_by_name_home_btn), "findByName", R.drawable.searchenfermeros)
     )
 
     LazyVerticalGrid(

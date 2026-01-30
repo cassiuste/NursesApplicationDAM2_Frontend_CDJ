@@ -22,7 +22,7 @@ fun AppNavigation(modifier: Modifier) {
 
     NavHost(
         navController = navController,
-        startDestination = "login"
+        startDestination = "register"
     ) {
         composable(route = "home") {
             InitialView(navController = navController)

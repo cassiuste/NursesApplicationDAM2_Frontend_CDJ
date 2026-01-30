@@ -109,8 +109,7 @@ fun RegisterSection(navController: NavController,
             },
             shape = RoundedCornerShape(4.dp)
         ) {
-            Text(stringResource(id = R.string.register),
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Companion.Medium))
+            Text(stringResource(id = R.string.register))
         }
 
         Spacer(Modifier.padding(top = 20.dp))

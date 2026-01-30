@@ -4,9 +4,10 @@
     <string name="write_name">Escribe el nombre</string>
     <string name="could_not_found_nurse">Could not found the nurse</string>
     <string name="clear_response">Clear Response</string>
-    <string name="Name">Name</string>
-    <string name="Surname">Surname</string>
-    <string name="User">User</string>
+    <string name="Name">Nombre</string>
+    <string name="Surname">Apellidos</string>
+    <string name="User">Usuario</string>
+
     <string name="we_are">We Are</string>
     <string name="hospital">Stucom</string>
     <string name="specialist">Specialist</string>
@@ -15,25 +16,28 @@
     <string name="slogan">Always with you</string>
     <string name="login">Login</string>
     <string name="app_logo">HospitalStucom Logo</string>
-    <string name="login_title1">Log in to </string>
-    <string name="account">Don’t have an account?</string>
-    <string name="onlyaccount">account</string>
-    <string name="forgot">Forgot password?</string>
-    <string name="SignUp">Sign up</string>
-    <string name="SignIn">Sign in</string>
+    <string name="login_title1">Accede a</string>
+    <string name="account">No tienes cuenta aun? </string>
+    <string name="onlyaccount">cuenta</string>
+    <string name="forgot">Olvidaste la contraseña?</string>
+    <string name="SignUp">Registrate</string>
+    <string name="SignIn">Iniciar Sesion</string>
 
-    <string name="incorrecto">Email and Password incorrect</string>
-    <string name="correcto">Welcome!</string>
-    <string name="nohaynada">You have put  Email and Password</string>
-    <string name="EmailExists">Email already exists</string>
-    <string name="NurseCreated">Nurse created successfully</string>
-    <string name="register">Register</string>
-    <string name="CreateAccount">Create nurse Account</string>
+    <string name="incorrecto">Email o Contraseña incorrecto</string>
+    <string name="correcto">Bienvenido!</string>
+    <string name="nohaynada">Tienes que introducir Email y Contraseña</string>
+    <string name="EmailExists">Email ya existe</string>
+    <string name="NurseCreated">Enfermer@ registrad@ con exito</string>
+    <string name="register">Registrate</string>
+    <string name="CreateAccount">Crear Cuenta</string>
     <string name="Email">Email</string>
-    <string name="Password">Password</string>
+    <string name="Password">Contraseña</string>
     <string name="Error">Error</string>
 
     <string name="title_init">¡Bienvenido al Hospital STUCOM!</string>
+    <string name="list_all_nurses_home_btn">Listado Completo</string>
+    <string name="search_by_name_home_btn">Buscar Enfermer@</string>
+
     <string name="button_info_list_all_nurses">Lista de Enfermer@s</string>
 
     <string name="title_allnurses_view">Listado de todos los enfermer@s</string>
@@ -52,4 +56,10 @@
     <string name="btn_modify">Modificar</string>
     <string name="btn_cancel">Cancelar</string>
     <string name="btn_save_changes">Guardar Cambios</string>
+
+    <string name="search_by_name_info">Introduce un nombre para buscar</string>
+
+    <string name="generic_error">Error</string>
+    <string name="not_found_error">No se encontró la enfermer@</string>
+
 </resources>

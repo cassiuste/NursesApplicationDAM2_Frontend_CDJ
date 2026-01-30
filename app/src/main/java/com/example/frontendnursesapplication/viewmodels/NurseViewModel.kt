@@ -81,7 +81,7 @@ class NurseViewModel: ViewModel() {
                     else
                         FindNameUiState.NotFound
                 } else {
-                    FindNameUiState.Error
+                    FindNameUiState.NotFound
                 }
 
             } catch (e: Exception) {

@@ -63,8 +63,10 @@ fun RegisterScreen(
 }
 
 @Composable
-fun RegisterSection(navController: NavController,
-                    nurseViewModel: NurseViewModel) {
+fun RegisterSection(
+    navController: NavController,
+    nurseViewModel: NurseViewModel
+) {
 
     val context = LocalContext.current
     val registerState = nurseViewModel.registerState.collectAsState().value
@@ -77,42 +79,91 @@ fun RegisterSection(navController: NavController,
 
     val bluegray = colorResource(id = R.color.blue_gray)
 
+    // Estado para mostrar mensaje de error
+    val errorMessage = remember { mutableStateOf("") }
+
     Column {
 
-        LoginTextField(label = stringResource(id = R.string.Name), trailing = "", textState = nameState)
-        LoginTextField(label = stringResource(id = R.string.Surname), trailing = "", textState = surnameState)
-        LoginTextField(label = stringResource(id = R.string.Email), trailing = "", textState = emailState)
-        LoginTextField(label = stringResource(id = R.string.User), trailing = "", textState = userState)
+        LoginTextField(
+            label = stringResource(id = R.string.Name),
+            trailing = "",
+            textState = nameState
+        )
+
+        LoginTextField(
+            label = stringResource(id = R.string.Surname),
+            trailing = "",
+            textState = surnameState
+        )
+
+        LoginTextField(
+            label = stringResource(id = R.string.Email),
+            trailing = "",
+            textState = emailState
+        )
+
+        LoginTextField(
+            label = stringResource(id = R.string.User),
+            trailing = "",
+            textState = userState
+        )
+
         LoginTextField(
             label = stringResource(id = R.string.Password),
             trailing = "",
-            isPassword = true,
             textState = passwordState
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+
+
+        if (errorMessage.value.isNotEmpty()) {
+            Text(
+                text = errorMessage.value,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 4.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
 
         Button(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(40.dp),
             onClick = {
-                nurseViewModel.register(
-                    Nurse(
-                        name = nameState.value,
-                        surname = surnameState.value,
-                        email = emailState.value,
-                        user = userState.value,
-                        pass = passwordState.value,
+                // Validación de campos vacíos
+                if (nameState.value.isBlank() ||
+                    surnameState.value.isBlank() ||
+                    emailState.value.isBlank() ||
+                    userState.value.isBlank() ||
+                    passwordState.value.isBlank()
+                ) {
+                    Toast.makeText(
+                        context,
+                        "Tienes que rellenar los campos vacios",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    nurseViewModel.register(
+                        Nurse(
+                            name = nameState.value,
+                            surname = surnameState.value,
+                            email = emailState.value,
+                            user = userState.value,
+                            pass = passwordState.value,
+                        )
                     )
-                )
+                }
             },
             shape = RoundedCornerShape(4.dp)
         ) {
             Text(stringResource(id = R.string.register))
         }
 
-        Spacer(Modifier.padding(top = 20.dp))
+        Spacer(Modifier.height(20.dp))
 
         Button(
             modifier = Modifier
@@ -122,15 +173,16 @@ fun RegisterSection(navController: NavController,
                 navController.navigate("login") {}
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isSystemInDarkTheme()) bluegray else Color.Companion.Black,
-                contentColor = Color.Companion.White
+                containerColor = if (isSystemInDarkTheme()) bluegray else Color.Black,
+                contentColor = Color.White
             ),
             shape = RoundedCornerShape(4.dp)
         ) {
-            Text(stringResource(id = R.string.SignIn),
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Companion.Medium))
+            Text(
+                stringResource(id = R.string.SignIn),
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium)
+            )
         }
-
 
 
         if (registerState.success) {

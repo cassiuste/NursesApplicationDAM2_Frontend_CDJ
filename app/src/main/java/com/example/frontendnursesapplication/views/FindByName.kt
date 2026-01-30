@@ -1,7 +1,6 @@
 package com.example.frontendnursesapplication.views
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,8 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,18 +42,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.frontendnursesapplication.R
 import com.example.frontendnursesapplication.components.TopBar
-import com.example.frontendnursesapplication.entities.FindNameUiState
+import com.example.frontendnursesapplication.entities.FindByNameUiSate
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 
 @Composable
 fun FindByName(navController: NavController, nurseViewModel: NurseViewModel){
-    val findByNameState = nurseViewModel._findByNameState
+    val FinfByName = nurseViewModel._findByNameState
     var search by remember { mutableStateOf("") }
 
     Column(
@@ -110,33 +103,33 @@ fun FindByName(navController: NavController, nurseViewModel: NurseViewModel){
             Column(modifier = Modifier.padding(top = 20.dp).fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,) {
-                when (findByNameState) {
-                    is FindNameUiState.Idle -> {
+                when (FinfByName) {
+                    is FindByNameUiSate.Idle -> {
                         Text(stringResource(R.string.search_by_name_info),
                             textAlign = TextAlign.Center)
                     }
 
-                    is FindNameUiState.Loading -> {
+                    is FindByNameUiSate.Loading -> {
                         CircularProgressIndicator()
                     }
 
-                    is FindNameUiState.Error -> {
+                    is FindByNameUiSate.Error -> {
                         Text(
                             stringResource(R.string.generic_error),
                             color = colorResource(R.color.redstucom)
                         )
                     }
 
-                    is FindNameUiState.NotFound -> {
+                    is FindByNameUiSate.NotFound -> {
                         Text(
                             stringResource(R.string.not_found_error),
                             color = colorResource(R.color.redstucom)
                         )
                     }
 
-                    is FindNameUiState.Success -> {
+                    is FindByNameUiSate.Success -> {
                         val nurse =
-                            (findByNameState as FindNameUiState.Success).nurse
+                            (FinfByName as FindByNameUiSate.Success).nurse
 
                         Column {
                             Spacer(modifier = Modifier.height(10.dp))

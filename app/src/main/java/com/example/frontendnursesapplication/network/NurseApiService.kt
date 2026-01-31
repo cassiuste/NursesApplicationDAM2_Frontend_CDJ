@@ -3,6 +3,7 @@ package com.example.frontendnursesapplication.network
 import com.example.frontendnursesapplication.entities.Nurse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
@@ -22,10 +23,11 @@ interface NurseApiService {
     suspend fun getNurse(@Path("id") id: Long): Response<Nurse>
 
     @PUT("nurse/{id}")
-    suspend fun updateNurse(
-        @Path("id") id: Long,
-        @Body nurse: Nurse
-    ): Response<Void>
+    suspend fun updateNurse(@Path("id") id: Long, @Body nurse: Nurse): Response<Void>
+
+    @DELETE("nurse/{id}")
+    suspend fun deleteNurse(@Path("id") id: Long): Response<Void>
+
     @POST("nurse")
     suspend fun registerNurse(
         @Body nurse: Nurse

@@ -106,7 +106,7 @@ fun NursesTable(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Esperando...")
+                Text(text= stringResource(R.string.waiting))
             }
         }
 
@@ -130,7 +130,7 @@ fun NursesTable(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("No se encontraron enfermeras")
+                Text(text= stringResource(R.string.nurses_not_found))
             }
         }
 
@@ -142,7 +142,7 @@ fun NursesTable(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Error al cargar datos", color = Color.Red)
+                Text(text= stringResource(R.string.loading_error), color = Color.Red)
             }
         }
 

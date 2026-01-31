@@ -42,6 +42,11 @@
 
     <string name="title_allnurses_view">Listado de todos los enfermer@s</string>
     <string name="button_info_return_home">Volver al Home</string>
+    <string name="waiting">Esperando…</string>
+    <string name="nurses_not_found">No se encontraron enfermeros</string>
+    <string name="loading_error">Error al cargar los datos</string>
+
+
 
     <string name="my_profile">Mi Perfil</string>
 

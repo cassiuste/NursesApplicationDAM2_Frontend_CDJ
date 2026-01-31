@@ -46,6 +46,7 @@ import com.example.frontendnursesapplication.R
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -56,6 +57,7 @@ import com.example.frontendnursesapplication.components.TopBar
 import com.example.frontendnursesapplication.entities.GetNurseUiState
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.entities.SessionUiState
+import com.example.frontendnursesapplication.entities.UpdateNurseUiState
 import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 import kotlinx.coroutines.delay
 
@@ -134,8 +136,11 @@ fun ProfileView(navController: NavController, nurseViewModel: NurseViewModel) {
 
             is GetNurseUiState.Success -> {
                 ProfileAvatar(state.nurse)
-                NurseForm(nurse = state.nurse, onSave = {
-                        navController.navigate("home")
+                NurseForm(nurse = state.nurse, nurseViewModel = nurseViewModel, onSave = {
+                        updatedNurse ->
+                            state.nurse.id?.let { id ->
+                            nurseViewModel.updateNurse(id, updatedNurse)
+                        }
                     }
                 )
             }
@@ -147,9 +152,11 @@ fun ProfileView(navController: NavController, nurseViewModel: NurseViewModel) {
 @Composable
 fun NurseForm(
     modifier: Modifier = Modifier,
+    nurseViewModel: NurseViewModel,
     onSave: (Nurse) -> Unit,
     nurse: Nurse
 ) {
+    val context = LocalContext.current
     var isEditable by remember { mutableStateOf(false) }
 
     var name by remember { mutableStateOf(nurse.name) }
@@ -157,6 +164,36 @@ fun NurseForm(
     var email by remember { mutableStateOf(nurse.email) }
     var user by remember { mutableStateOf(nurse.user) }
     var pass by remember { mutableStateOf(nurse.pass) }
+
+
+    val updateState = nurseViewModel._updateNurseState
+    val successMessage = stringResource(R.string.toat_msg_succes)
+    val errorMessage = stringResource(R.string.toat_msg_error)
+
+    LaunchedEffect(updateState) {
+        when (updateState) {
+            is UpdateNurseUiState.Success -> {
+                android.widget.Toast.makeText(
+                    context,
+                    successMessage,
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+
+                delay(2000)
+                nurseViewModel.clearUpdateState()
+            }
+            is UpdateNurseUiState.Error -> {
+                android.widget.Toast.makeText(
+                    context,
+                    errorMessage,
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+                delay(2000)
+                nurseViewModel.clearUpdateState()
+            }
+            else -> {}
+        }
+    }
 
     Column(
         modifier = modifier
@@ -183,12 +220,17 @@ fun NurseForm(
 
         var passwordVisible by remember { mutableStateOf(false) }
 
+        val isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        val areFieldsNotEmpty = name.isNotBlank() && surname.isNotBlank() && user.isNotBlank() && pass.isNotBlank()
+        val canSave = isEmailValid && areFieldsNotEmpty
+
         OutlinedTextField(
             value = name.toString(),
             onValueChange = { name = it },
             label = { Text(stringResource(R.string.label_name)) },
             modifier = Modifier.fillMaxWidth(),
-            enabled = isEditable
+            enabled = isEditable,
+            isError = name.isBlank() && isEditable
         )
 
         OutlinedTextField(
@@ -196,7 +238,8 @@ fun NurseForm(
             onValueChange = { surname = it },
             label = { Text(stringResource(R.string.label_surname)) },
             modifier = Modifier.fillMaxWidth(),
-            enabled = isEditable
+            enabled = isEditable,
+            isError = surname.isBlank() && isEditable
         )
 
         OutlinedTextField(
@@ -204,7 +247,8 @@ fun NurseForm(
             onValueChange = { email = it },
             label = { Text(stringResource(R.string.label_email)) },
             modifier = Modifier.fillMaxWidth(),
-            enabled = isEditable
+            enabled = isEditable,
+            isError = !isEmailValid && email.isNotEmpty() && isEditable,
         )
 
         OutlinedTextField(
@@ -212,7 +256,8 @@ fun NurseForm(
             onValueChange = { user = it },
             label = { Text(stringResource(R.string.label_user)) },
             modifier = Modifier.fillMaxWidth(),
-            enabled = isEditable
+            enabled = isEditable,
+            isError = user.isBlank() && isEditable
         )
 
         OutlinedTextField(
@@ -221,7 +266,7 @@ fun NurseForm(
             label = { Text(stringResource(R.string.label_password)) },
             modifier = Modifier.fillMaxWidth(),
             enabled = isEditable,
-
+            isError = pass.isBlank() && isEditable,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
@@ -241,12 +286,17 @@ fun NurseForm(
         if (isEditable) {
             Button(
                 onClick = {
-                    onSave(Nurse(name=name, surname = surname, email = email, user = user, pass = pass))
+                    onSave(nurse.copy(name = name, surname = surname, email = email, user = user, pass = pass))
                     isEditable = false
                 },
-                modifier = Modifier.align(Alignment.End)
+                enabled = canSave && updateState !is UpdateNurseUiState.Loading,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp)
             ) {
-                Text(stringResource(R.string.btn_save_changes))
+                if (updateState is UpdateNurseUiState.Loading) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.White)
+                } else {
+                    Text(stringResource(R.string.btn_save_changes))
+                }
             }
         }
     }

@@ -181,25 +181,25 @@ class NurseViewModel: ViewModel() {
 
     fun updateNurse(id: Long, nurse: Nurse) {
         _updateNurseState = UpdateNurseUiState.Loading
-        Log.d("UPDATE_NURSE", "Entrando en updateNurse")
 
         viewModelScope.launch {
             try {
                 val response = repository.updateNurse(id, nurse)
 
                 if (response.isSuccessful) {
-                    Log.d("UPDATE_NURSE", "Update correcto")
                     _updateNurseState = UpdateNurseUiState.Success
+
+                    _getNurseUiState.value = GetNurseUiState.Success(nurse.copy(id = id))
+
                 } else {
-                    Log.e("UPDATE_NURSE", "Error HTTP ${response.code()}")
                     _updateNurseState = UpdateNurseUiState.Error
                 }
             } catch (e: Exception) {
-                Log.e("UPDATE_NURSE", "Exception", e)
                 _updateNurseState = UpdateNurseUiState.Error
             }
         }
     }
+
     fun clearUpdateState() {
         _updateNurseState = UpdateNurseUiState.Idle
     }

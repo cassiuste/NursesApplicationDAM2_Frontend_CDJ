@@ -278,7 +278,7 @@ fun LoginSection(navController: NavController,
 
         ) {
             Text(
-                text = "Log in",
+                text = stringResource(R.string.SignIn),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Companion.Medium)
             )
         }

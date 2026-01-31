@@ -17,12 +17,12 @@ interface NurseApiService {
     @Headers("Accept: application/json","Content-Type: application/json")
     @POST("nurse/login")
     suspend fun login(@Body nurse: Nurse): Nurse
+
     @PUT("nurse/{id}")
     suspend fun updateNurse(
         @Path("id") id: Long,
         @Body nurse: Nurse
-    ): Response<Nurse>
-
+    ): Response<Void>
     @POST("nurse")
     suspend fun registerNurse(
         @Body nurse: Nurse

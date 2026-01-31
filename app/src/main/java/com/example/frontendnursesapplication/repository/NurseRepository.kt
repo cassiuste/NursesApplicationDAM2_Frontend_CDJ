@@ -20,6 +20,9 @@ class NurseRepository(private val apiService: NurseApiService) {
         return apiService.updateNurse(id, nurse)
     }
 
+    suspend fun deleteNurse(id: Long): Response<Void> {
+        return apiService.deleteNurse(id)
+    }
 
     suspend fun registerNurse(nurse: Nurse): Response<Nurse> {
         return apiService.registerNurse(nurse)

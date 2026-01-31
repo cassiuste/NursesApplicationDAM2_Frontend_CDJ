@@ -17,7 +17,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -54,6 +57,7 @@ import androidx.core.content.ContextCompat
 import com.example.frontendnursesapplication.components.ProfileAvatar
 import com.example.frontendnursesapplication.components.ProfileTopBar
 import com.example.frontendnursesapplication.components.TopBar
+import com.example.frontendnursesapplication.entities.DeleteNurseUiState
 import com.example.frontendnursesapplication.entities.GetNurseUiState
 import com.example.frontendnursesapplication.entities.Nurse
 import com.example.frontendnursesapplication.entities.SessionUiState
@@ -66,10 +70,51 @@ fun ProfileView(navController: NavController, nurseViewModel: NurseViewModel) {
 
     val sessionUiState by nurseViewModel.sessionState.collectAsState()
     val getNurseUiState by nurseViewModel.getNurseUiState.collectAsState()
+    val deleteNurseUiState by nurseViewModel.deleteNurseUiState.collectAsState()
+
+    var showDialog by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     LaunchedEffect(sessionUiState.nurse?.id) {
         sessionUiState.nurse?.id?.let { id ->
             nurseViewModel.getNurse(id)
+        }
+    }
+
+    LaunchedEffect(deleteNurseUiState) {
+        when (deleteNurseUiState) {
+            is DeleteNurseUiState.Success -> {
+
+                nurseViewModel.resetLoginState()
+                nurseViewModel.resetRegisterState()
+
+                android.widget.Toast.makeText(
+                    context,
+                    "Cuenta eliminada",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+
+                navController.navigate("register") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+
+                nurseViewModel.resetDeleteState()
+            }
+
+            is DeleteNurseUiState.Error -> {
+                android.widget.Toast.makeText(
+                    context,
+                    "Hubo un error al borrar",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+                nurseViewModel.resetDeleteState()
+            }
+
+            else -> {}
         }
     }
 
@@ -135,6 +180,7 @@ fun ProfileView(navController: NavController, nurseViewModel: NurseViewModel) {
             }
 
             is GetNurseUiState.Success -> {
+                DeleteAccountButton(onClick = { showDialog = true })
                 ProfileAvatar(state.nurse)
                 NurseForm(nurse = state.nurse, nurseViewModel = nurseViewModel, onSave = {
                         updatedNurse ->
@@ -146,6 +192,19 @@ fun ProfileView(navController: NavController, nurseViewModel: NurseViewModel) {
             }
 
         }
+    }
+
+    if (showDialog) {
+        DeleteConfirmationDialog(
+            onConfirm = {
+                val nurseId = (getNurseUiState as? GetNurseUiState.Success)?.nurse?.id
+                nurseId?.let { id ->
+                    nurseViewModel.deleteNurse(id)
+                }
+                showDialog = false
+            },
+            onDismiss = { showDialog = false }
+        )
     }
 }
 
@@ -302,3 +361,50 @@ fun NurseForm(
     }
 }
 
+@Composable
+fun DeleteAccountButton(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.End
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Eliminar cuenta",
+                tint = Color.Red,
+                modifier = Modifier.size(28.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun DeleteConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Confirmar eliminación", fontWeight = FontWeight.Bold)
+        },
+        text = {
+            Text(text = "¿Estás seguro de que quieres eliminar este usuario? Esta acción no se puede deshacer.")
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text("Eliminar", color = Color.White)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
+}

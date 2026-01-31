@@ -35,6 +35,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -55,7 +56,9 @@ import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 fun AllNursesView (navController: NavHostController,
                    nurseViewModel: NurseViewModel) {
 
-
+    LaunchedEffect(Unit) {
+        nurseViewModel.getAllNurses()
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

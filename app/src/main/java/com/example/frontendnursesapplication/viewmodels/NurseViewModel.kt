@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.frontendnursesapplication.entities.DeleteNurseUiState
 import com.example.frontendnursesapplication.entities.FindByNameUiSate
 import com.example.frontendnursesapplication.entities.GetNurseUiState
 import com.example.frontendnursesapplication.entities.ListAllUiState
@@ -34,6 +35,9 @@ class NurseViewModel: ViewModel() {
 
     private val _getNurseUiState = MutableStateFlow<GetNurseUiState>(GetNurseUiState.Idle)
     val getNurseUiState: StateFlow<GetNurseUiState> get() = _getNurseUiState.asStateFlow()
+
+    private val _deleteNurseUiState = MutableStateFlow<DeleteNurseUiState>(DeleteNurseUiState.Idle)
+    val deleteNurseUiState: StateFlow<DeleteNurseUiState> get() = _deleteNurseUiState.asStateFlow()
 
     var _updateNurseState by
     mutableStateOf<UpdateNurseUiState>(UpdateNurseUiState.Idle)
@@ -102,7 +106,6 @@ class NurseViewModel: ViewModel() {
             }
         }
     }
-
 
     fun clearResults() {
         _findByNameState = FindByNameUiSate.Idle
@@ -204,6 +207,30 @@ class NurseViewModel: ViewModel() {
         _updateNurseState = UpdateNurseUiState.Idle
     }
 
+    fun deleteNurse(id: Long) {
+        viewModelScope.launch {
+            _deleteNurseUiState.value = DeleteNurseUiState.Loading
+            try {
+                val response = repository.deleteNurse(id)
+                if (response.isSuccessful) {
+                    _deleteNurseUiState.value = DeleteNurseUiState.Success
+                } else {
+                    _deleteNurseUiState.value = DeleteNurseUiState.Error
+                }
+            } catch (e: Exception) {
+                _deleteNurseUiState.value = DeleteNurseUiState.Error
+            }
+        }
+    }
+
+    fun resetDeleteState() {
+        _deleteNurseUiState.value = DeleteNurseUiState.Idle
+    }
+
+    fun clearSession() {
+        _sessionState.value = SessionUiState(nurse = null, isLogged = false)
+    }
+
     fun register(nurse: Nurse) {
             viewModelScope.launch {
                 try {
@@ -230,8 +257,17 @@ class NurseViewModel: ViewModel() {
                     Log.e("REGISTER", "Excepción: ${e.message}")
                 }
             }
-        }
     }
+
+    fun resetLoginState() {
+        _loginState.value = LoginUiState()
+    }
+
+    fun resetRegisterState() {
+        _registerState.value = RegisterUiState()
+    }
+
+}
 
 
 

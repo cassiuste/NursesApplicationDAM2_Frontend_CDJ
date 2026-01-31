@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -26,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,39 +46,117 @@ import com.example.frontendnursesapplication.R
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.core.content.ContextCompat
+import com.example.frontendnursesapplication.components.ProfileAvatar
 import com.example.frontendnursesapplication.components.ProfileTopBar
 import com.example.frontendnursesapplication.components.TopBar
+import com.example.frontendnursesapplication.entities.GetNurseUiState
 import com.example.frontendnursesapplication.entities.Nurse
+import com.example.frontendnursesapplication.entities.SessionUiState
 import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun ProfileView(navController: NavController, nurseViewModel: NurseViewModel) {
 
+    val sessionUiState by nurseViewModel.sessionState.collectAsState()
+    val getNurseUiState by nurseViewModel.getNurseUiState.collectAsState()
+
+    LaunchedEffect(sessionUiState.nurse?.id) {
+        sessionUiState.nurse?.id?.let { id ->
+            nurseViewModel.getNurse(id)
+        }
+    }
+
     Column() {
         ProfileTopBar(onBack = {navController.popBackStack()})
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        NurseForm(onSave = {
-            navController.navigate("listAll")
-        })
+        when(val state = getNurseUiState){
+
+            is GetNurseUiState.Idle -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.padding(top = 250.dp))
+                }
+            }
+
+            is GetNurseUiState.Loading -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.padding(top = 250.dp))
+                }
+            }
+
+            is GetNurseUiState.NotFound-> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = stringResource(
+                        R.string.NotFound),
+                        modifier = Modifier.padding(top = 250.dp),
+                        color = colorResource(R.color.redstucom))
+                }
+            }
+
+            is GetNurseUiState.Error -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = stringResource(
+                        R.string.Error),
+                        modifier = Modifier.padding(top = 250.dp),
+                        color = colorResource(R.color.redstucom))
+                }
+            }
+
+            is GetNurseUiState.Success -> {
+                ProfileAvatar(state.nurse)
+                NurseForm(nurse = state.nurse, onSave = {
+                        navController.navigate("home")
+                    }
+                )
+            }
+
+        }
     }
 }
 
 @Composable
 fun NurseForm(
     modifier: Modifier = Modifier,
-    onSave: (Nurse) -> Unit
+    onSave: (Nurse) -> Unit,
+    nurse: Nurse
 ) {
     var isEditable by remember { mutableStateOf(false) }
 
-    var name by remember { mutableStateOf("") }
-    var surname by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var user by remember { mutableStateOf("") }
-    var pass by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(nurse.name) }
+    var surname by remember { mutableStateOf(nurse.surname) }
+    var email by remember { mutableStateOf(nurse.email) }
+    var user by remember { mutableStateOf(nurse.user) }
+    var pass by remember { mutableStateOf(nurse.pass) }
 
     Column(
         modifier = modifier
@@ -100,8 +181,10 @@ fun NurseForm(
             }
         }
 
+        var passwordVisible by remember { mutableStateOf(false) }
+
         OutlinedTextField(
-            value = name,
+            value = name.toString(),
             onValueChange = { name = it },
             label = { Text(stringResource(R.string.label_name)) },
             modifier = Modifier.fillMaxWidth(),
@@ -137,7 +220,22 @@ fun NurseForm(
             onValueChange = { pass = it },
             label = { Text(stringResource(R.string.label_password)) },
             modifier = Modifier.fillMaxWidth(),
-            enabled = isEditable
+            enabled = isEditable,
+
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            trailingIcon = {
+                val image = if (passwordVisible)
+                    painterResource(id = R.drawable.ic_visibility)
+                else
+                    painterResource(id = R.drawable.ic_visibility_off)
+
+                val description = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(painter = image, contentDescription = description, modifier = Modifier.size(20.dp))
+                }
+            }
         )
 
         if (isEditable) {

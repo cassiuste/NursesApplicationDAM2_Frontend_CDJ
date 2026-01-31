@@ -7,10 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frontendnursesapplication.entities.FindByNameUiSate
+import com.example.frontendnursesapplication.entities.GetNurseUiState
 import com.example.frontendnursesapplication.entities.ListAllUiState
 import com.example.frontendnursesapplication.entities.LoginUiState
 import com.example.frontendnursesapplication.entities.Nurse
-import com.example.frontendnursesapplication.entities.NurseUiState
 import com.example.frontendnursesapplication.entities.RegisterUiState
 import com.example.frontendnursesapplication.entities.SessionUiState
 import com.example.frontendnursesapplication.entities.UpdateNurseUiState
@@ -32,11 +32,12 @@ class NurseViewModel: ViewModel() {
     private val _uiState = MutableStateFlow<ListAllUiState>(ListAllUiState.Idle)
     val uiState: StateFlow<ListAllUiState> get() = _uiState.asStateFlow()
 
+    private val _getNurseUiState = MutableStateFlow<GetNurseUiState>(GetNurseUiState.Idle)
+    val getNurseUiState: StateFlow<GetNurseUiState> get() = _getNurseUiState.asStateFlow()
+
     var _updateNurseState by
     mutableStateOf<UpdateNurseUiState>(UpdateNurseUiState.Idle)
         private set
-
-
 
     var _findByNameState by mutableStateOf<FindByNameUiSate>(FindByNameUiSate.Idle)
         private set
@@ -55,6 +56,7 @@ class NurseViewModel: ViewModel() {
 
     init {
         _uiState.value = ListAllUiState.Idle
+        _getNurseUiState.value = GetNurseUiState.Idle
         _loginState.value = LoginUiState("", "")
         _registerState.value = RegisterUiState()
         getAllNurses()
@@ -144,6 +146,35 @@ class NurseViewModel: ViewModel() {
                         success = false
                     )
                 }
+            }
+        }
+    }
+
+    fun getNurse(id: Long?) {
+        if (id == null) return
+
+        viewModelScope.launch {
+            _getNurseUiState.value = GetNurseUiState.Loading
+
+            try {
+                val response = repository.getNurse(id)
+
+                if (response.isSuccessful) {
+                    val nurse = response.body()
+
+                    if (nurse != null) {
+                        _getNurseUiState.value = GetNurseUiState.Success(nurse)
+                    } else {
+                        _getNurseUiState.value = GetNurseUiState.NotFound
+                    }
+                } else if (response.code() == 404){
+                    _getNurseUiState.value = GetNurseUiState.NotFound
+                } else {
+                    _getNurseUiState.value = GetNurseUiState.Error
+                }
+
+            } catch (e: Exception) {
+                _getNurseUiState.value = GetNurseUiState.Error
             }
         }
     }

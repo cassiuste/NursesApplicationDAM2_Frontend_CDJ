@@ -18,6 +18,9 @@ interface NurseApiService {
     @POST("nurse/login")
     suspend fun login(@Body nurse: Nurse): Nurse
 
+    @GET("nurse/{id}")
+    suspend fun getNurse(@Path("id") id: Long): Response<Nurse>
+
     @PUT("nurse/{id}")
     suspend fun updateNurse(
         @Path("id") id: Long,

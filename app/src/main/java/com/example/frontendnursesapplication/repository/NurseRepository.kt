@@ -12,6 +12,15 @@ class NurseRepository(private val apiService: NurseApiService) {
         return apiService.login(nurse)
     }
 
+    suspend fun getNurse(id: Long): Response<Nurse> {
+        return apiService.getNurse(id)
+    }
+
+    suspend fun updateNurse(id: Long, nurse: Nurse): Response<Void> {
+        return apiService.updateNurse(id, nurse)
+    }
+
+
     suspend fun registerNurse(nurse: Nurse): Response<Nurse> {
         return apiService.registerNurse(nurse)
     }

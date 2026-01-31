@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.frontendnursesapplication.R
+import com.example.frontendnursesapplication.components.HomeTopBar
 
 @Composable
 fun InitialView(navController: NavHostController) {
@@ -32,7 +33,12 @@ fun InitialView(navController: NavHostController) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            HomeTopBar(onBack = {
+                navController.navigate("profile")
+            })
+
             TopSection()
+
             Spacer(modifier = Modifier.height(40.dp))
 
             Text(

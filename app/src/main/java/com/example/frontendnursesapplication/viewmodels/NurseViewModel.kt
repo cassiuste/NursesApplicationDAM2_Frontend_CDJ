@@ -7,12 +7,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frontendnursesapplication.entities.FindByNameUiSate
+import com.example.frontendnursesapplication.entities.GetNurseUiState
 import com.example.frontendnursesapplication.entities.ListAllUiState
 import com.example.frontendnursesapplication.entities.LoginUiState
 import com.example.frontendnursesapplication.entities.Nurse
-import com.example.frontendnursesapplication.entities.NurseUiState
 import com.example.frontendnursesapplication.entities.RegisterUiState
 import com.example.frontendnursesapplication.entities.SessionUiState
+import com.example.frontendnursesapplication.entities.UpdateNurseUiState
 import com.example.frontendnursesapplication.network.RetrofitClient
 import com.example.frontendnursesapplication.repository.NurseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +32,12 @@ class NurseViewModel: ViewModel() {
     private val _uiState = MutableStateFlow<ListAllUiState>(ListAllUiState.Idle)
     val uiState: StateFlow<ListAllUiState> get() = _uiState.asStateFlow()
 
+    private val _getNurseUiState = MutableStateFlow<GetNurseUiState>(GetNurseUiState.Idle)
+    val getNurseUiState: StateFlow<GetNurseUiState> get() = _getNurseUiState.asStateFlow()
 
+    var _updateNurseState by
+    mutableStateOf<UpdateNurseUiState>(UpdateNurseUiState.Idle)
+        private set
 
     var _findByNameState by mutableStateOf<FindByNameUiSate>(FindByNameUiSate.Idle)
         private set
@@ -50,6 +56,7 @@ class NurseViewModel: ViewModel() {
 
     init {
         _uiState.value = ListAllUiState.Idle
+        _getNurseUiState.value = GetNurseUiState.Idle
         _loginState.value = LoginUiState("", "")
         _registerState.value = RegisterUiState()
         getAllNurses()
@@ -143,7 +150,61 @@ class NurseViewModel: ViewModel() {
         }
     }
 
-        fun register(nurse: Nurse) {
+    fun getNurse(id: Long?) {
+        if (id == null) return
+
+        viewModelScope.launch {
+            _getNurseUiState.value = GetNurseUiState.Loading
+
+            try {
+                val response = repository.getNurse(id)
+
+                if (response.isSuccessful) {
+                    val nurse = response.body()
+
+                    if (nurse != null) {
+                        _getNurseUiState.value = GetNurseUiState.Success(nurse)
+                    } else {
+                        _getNurseUiState.value = GetNurseUiState.NotFound
+                    }
+                } else if (response.code() == 404){
+                    _getNurseUiState.value = GetNurseUiState.NotFound
+                } else {
+                    _getNurseUiState.value = GetNurseUiState.Error
+                }
+
+            } catch (e: Exception) {
+                _getNurseUiState.value = GetNurseUiState.Error
+            }
+        }
+    }
+
+    fun updateNurse(id: Long, nurse: Nurse) {
+        _updateNurseState = UpdateNurseUiState.Loading
+        Log.d("UPDATE_NURSE", "Entrando en updateNurse")
+
+        viewModelScope.launch {
+            try {
+                val response = repository.updateNurse(id, nurse)
+
+                if (response.isSuccessful) {
+                    Log.d("UPDATE_NURSE", "Update correcto")
+                    _updateNurseState = UpdateNurseUiState.Success
+                } else {
+                    Log.e("UPDATE_NURSE", "Error HTTP ${response.code()}")
+                    _updateNurseState = UpdateNurseUiState.Error
+                }
+            } catch (e: Exception) {
+                Log.e("UPDATE_NURSE", "Exception", e)
+                _updateNurseState = UpdateNurseUiState.Error
+            }
+        }
+    }
+    fun clearUpdateState() {
+        _updateNurseState = UpdateNurseUiState.Idle
+    }
+
+    fun register(nurse: Nurse) {
             viewModelScope.launch {
                 try {
                     val response = repository.registerNurse(nurse)

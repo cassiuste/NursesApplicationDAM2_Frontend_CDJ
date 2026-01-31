@@ -95,7 +95,7 @@ fun TopBar(onBack: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.Default.Person,
-                contentDescription = "Mensajes",
+                contentDescription = "Profile",
                 tint = colorResource(R.color.purple_500),
                 modifier = Modifier.size(20.dp)
             )
@@ -181,5 +181,44 @@ fun ProfileTopBar(
                 color = colorResource(R.color.black)
             )
         )
+    }
+}
+
+@Composable
+fun HomeTopBar(onBack: () -> Unit) {
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(horizontal = 25.dp, vertical = 25.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+        }
+
+        IconButton(
+            onClick = { onBack() },
+            modifier = Modifier
+                .background(
+                    color = colorResource(R.color.purple_500).copy(alpha = 0.1f),
+                    shape = CircleShape
+                )
+                .size(40.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Profile",
+                tint = colorResource(R.color.purple_500),
+                modifier = Modifier.size(20.dp)
+            )
+        }
     }
 }

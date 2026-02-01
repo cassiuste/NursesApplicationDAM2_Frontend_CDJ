@@ -65,7 +65,7 @@ fun AllNursesView (navController: NavHostController,
         horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-        TopBar(onBack = {navController.navigate("profile")})
+        TopBar(navController = navController, nurseViewModel = nurseViewModel)
 
         Text(
             text = stringResource(R.string.title_allnurses_view),

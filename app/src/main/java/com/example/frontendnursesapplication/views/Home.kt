@@ -24,18 +24,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.frontendnursesapplication.R
 import com.example.frontendnursesapplication.components.HomeTopBar
+import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 
 @Composable
-fun InitialView(navController: NavHostController) {
+fun InitialView(navController: NavHostController, nurseViewModel: NurseViewModel) {
     Box(modifier = Modifier.statusBarsPadding()) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HomeTopBar(onBack = {
-                navController.navigate("profile")
-            })
+            HomeTopBar(navController = navController, nurseViewModel = nurseViewModel)
 
             TopSection()
 

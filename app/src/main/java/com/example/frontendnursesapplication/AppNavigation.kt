@@ -25,7 +25,7 @@ fun AppNavigation(modifier: Modifier) {
         startDestination = "register"
     ) {
         composable(route = "home") {
-            InitialView(navController = navController)
+            InitialView(navController = navController, nurseViewModel)
         }
 
         composable(route = "login") {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,8 +16,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -37,11 +41,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.frontendnursesapplication.R
+import com.example.frontendnursesapplication.viewmodels.NurseViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun TopBar(onBack: () -> Unit) {
+fun TopBar(navController: NavController, nurseViewModel: NurseViewModel) {
+
+    var expanded by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -84,21 +92,68 @@ fun TopBar(onBack: () -> Unit) {
             }
         }
 
-        IconButton(
-            onClick = { onBack() },
-            modifier = Modifier
-                .background(
-                    color = colorResource(R.color.purple_500).copy(alpha = 0.1f),
-                    shape = CircleShape
+        Box {
+            IconButton(
+                onClick = { expanded = true },
+                modifier = Modifier
+                    .background(
+                        color = colorResource(R.color.purple_500).copy(alpha = 0.1f),
+                        shape = CircleShape
+                    )
+                    .size(40.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Opciones",
+                    tint = colorResource(R.color.purple_500),
+                    modifier = Modifier.size(20.dp)
                 )
-                .size(40.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Profile",
-                tint = colorResource(R.color.purple_500),
-                modifier = Modifier.size(20.dp)
-            )
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                // Opción 1: Mi Perfil
+                DropdownMenuItem(
+                    text = { Text("Mi Perfil") },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Person,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    },
+                    onClick = {
+                        expanded = false
+                        navController.navigate("profile")
+                    }
+                )
+
+                // Opción 2: Log Out
+                DropdownMenuItem(
+                    text = { Text("Log out", color = Color.Red) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.ExitToApp,
+                            contentDescription = null,
+                            tint = Color.Red,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    },
+                    onClick = {
+                        expanded = false
+                        nurseViewModel.clearSession()
+                        nurseViewModel.resetLoginState()
+                        nurseViewModel.resetRegisterState()
+
+
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -185,7 +240,9 @@ fun ProfileTopBar(
 }
 
 @Composable
-fun HomeTopBar(onBack: () -> Unit) {
+fun HomeTopBar(navController: NavController, nurseViewModel: NurseViewModel) {
+
+    var expanded by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -204,21 +261,66 @@ fun HomeTopBar(onBack: () -> Unit) {
 
         }
 
-        IconButton(
-            onClick = { onBack() },
-            modifier = Modifier
-                .background(
-                    color = colorResource(R.color.purple_500).copy(alpha = 0.1f),
-                    shape = CircleShape
+        Box {
+            IconButton(
+                onClick = { expanded = true },
+                modifier = Modifier
+                    .background(
+                        color = colorResource(R.color.purple_500).copy(alpha = 0.1f),
+                        shape = CircleShape
+                    )
+                    .size(40.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Opciones",
+                    tint = colorResource(R.color.purple_500),
+                    modifier = Modifier.size(20.dp)
                 )
-                .size(40.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Profile",
-                tint = colorResource(R.color.purple_500),
-                modifier = Modifier.size(20.dp)
-            )
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Mi Perfil") },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Person,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    },
+                    onClick = {
+                        expanded = false
+                        navController.navigate("profile")
+                    }
+                )
+
+                DropdownMenuItem(
+                    text = { Text("Log out", color = Color.Red) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.ExitToApp,
+                            contentDescription = null,
+                            tint = Color.Red,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    },
+                    onClick = {
+                        expanded = false
+                        nurseViewModel.clearSession()
+                        nurseViewModel.resetLoginState()
+                        nurseViewModel.resetRegisterState()
+
+
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
+            }
         }
     }
 }

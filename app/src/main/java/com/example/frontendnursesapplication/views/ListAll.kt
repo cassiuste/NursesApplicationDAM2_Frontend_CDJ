@@ -158,7 +158,7 @@ fun NursesTable(
                 contentPadding = PaddingValues(20.dp)
             ) {
                 items(currentState.nurses) { nurse ->
-                    NurseCard(nurse = nurse)
+                    NurseCardListAll(nurse = nurse)
                 }
             }
         }
@@ -169,7 +169,7 @@ fun NursesTable(
 
 
 @Composable
-fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
+fun NurseCardListAll(nurse: Nurse) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -239,7 +239,7 @@ fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
                         )
                     }
                 }
-                NurseImage(nurse = nurse, nurseViewModel = nurseViewModel)
+                NurseImage(nurse = nurse)
             }
         }
     }
@@ -248,55 +248,22 @@ fun NurseCard(nurse: Nurse, nurseViewModel: NurseViewModel = NurseViewModel()) {
 @Composable
 fun NurseImage(
     nurse: Nurse,
-    nurseViewModel: NurseViewModel,
     modifier: Modifier = Modifier
 ) {
-
-    val listAllUiState = nurseViewModel._ListAllSate
-    Column(
-        modifier = Modifier.padding(top = 20.dp).fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        when (listAllUiState) {
-            is ListAllUiState.Idle,
-            is ListAllUiState.Error,
-            is ListAllUiState.NotFound,
-            is ListAllUiState.Loading -> {
-
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Placeholder",
-                    modifier = modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                )
-            }
-
-            is ListAllUiState.Success -> {
-
-                if (nurse.imageUrl.isNotEmpty()) {
-                    val painter = rememberAsyncImagePainter(
-                        "http://10.0.2.2:8080/nurse/uploads/${nurse.imageUrl}"
-                    )
-                    Image(
-                        painter = painter,
-                        contentDescription = "Imagen de ${nurse.name}",
-                        modifier = modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                    )
-                } else {
-
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Placeholder",
-                        modifier = modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                    )
-                }
-            }
+    val painter =
+        if (nurse.imageUrl.isNotEmpty()) {
+            rememberAsyncImagePainter(
+                "http://10.0.2.2:8080/nurse/uploads/${nurse.imageUrl}"
+            )
+        } else {
+            painterResource(R.drawable.enfermero)
         }
-    }
+
+    Image(
+        painter = painter,
+        contentDescription = "Imagen de ${nurse.name}",
+        modifier = modifier
+            .size(48.dp)
+            .clip(CircleShape)
+    )
 }

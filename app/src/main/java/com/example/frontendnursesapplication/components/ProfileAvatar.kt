@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,6 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.example.frontendnursesapplication.R
 import com.example.frontendnursesapplication.entities.Nurse
 
@@ -44,34 +47,36 @@ fun ProfileAvatar(nurse: Nurse?) {
                 .background(Color(0xFFE0E0E0)),
             contentAlignment = Alignment.Center
         ) {
-            // Aquí puedes poner una imagen real si tienes la URL
-            // Por ahora, usamos un icono o una imagen de placeholder
-            Icon(
-                imageVector = Icons.Filled.Person,
-                contentDescription = "Avatar de perfil",
-                modifier = Modifier.size(70.dp),
-                tint = Color.Gray // Color del icono
-            )
-            // Si tuvieras una URL, sería algo así:
-            // AsyncImage(
-            //    model = nurse?.profileImageUrl ?: R.drawable.default_avatar,
-            //    contentDescription = "Avatar de perfil",
-            //    modifier = Modifier.fillMaxSize(),
-            //    contentScale = ContentScale.Crop
-            // )
+
+            if (nurse?.imageUrl != null && nurse.imageUrl.isNotEmpty()) {
+                AsyncImage(
+                    model = "http://10.0.2.2:8080/nurse/uploads/${nurse.imageUrl}",
+                    contentDescription = "Avatar de perfil",
+                    modifier = Modifier.fillMaxSize().clip(CircleShape),
+                    contentScale = ContentScale.Crop,
+                    error = painterResource(R.drawable.enfermero),
+                    placeholder = painterResource(R.drawable.enfermero)
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.Person,
+                    contentDescription = "Avatar de perfil por defecto",
+                    modifier = Modifier.size(70.dp),
+                    tint = Color.Gray
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Nombre del usuario debajo del avatar
         Text(
-            text = nurse?.name ?: "Usuario",
+            text = nurse?.name ?: "Sin Nombre",
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = nurse?.user ?: "no user",
+            text = nurse?.user ?: "Sin Usuario",
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

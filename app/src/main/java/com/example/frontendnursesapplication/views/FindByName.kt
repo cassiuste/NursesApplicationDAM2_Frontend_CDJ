@@ -60,9 +60,7 @@ fun FindByName(navController: NavController, nurseViewModel: NurseViewModel){
         horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-        TopBar(onBack = {
-            navController.navigate("Profile")
-        })
+        TopBar(navController = navController, nurseViewModel = nurseViewModel)
 
         Spacer(modifier = Modifier.height(33.dp))
 
